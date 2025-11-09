@@ -1,17 +1,18 @@
 #include "board.h"
-#include "renering.cpp"
+#include "rendering.cpp"
+#include "input.cpp"
 
 int main(int argc, char* argv[]) {
 	ChessBoard board();
-	createRendering();
-	bool running = true;
+	startApp();
+	renderChessBoard(board);
 
+	bool running = true;
 	while (running) {
-		bool quit = renderBoard();	
-		quit ? running = false; :
+		running = input();
 	}
 
-	destructRendering();
+	stopApp();
 
 	return 0;
 }

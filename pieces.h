@@ -1,54 +1,63 @@
 #ifndef PIECES_H
 #define PIECES_H
 
+#include <utility>
+
+enum Color {White, Black};
+
 class ChessPiece {
 	public :
 		ChessPiece();
-		virtual canMove();
+		virtual bool canMoveTo(std::pair<std::size_t, std::size_t>);
 
 	protected :
 		int value;
-		std::pair<size_t, size_t> currentPos;
+		Color color;
 };
 
 class Pawn : public ChessPiece {
 	public :
-		Pawn();
-		canMove() override;
+		Pawn(Color);
+		bool canMoveTo(std::pair<std::size_t, std::size_t>) override;
 	
 	private :
 		bool hasMoved;
-		bool white;
 };
 
 class Bishop : public ChessPiece {
 	public :
-		Bishop();
-		canMove() override;
+		Bishop(Color);
+		bool canMoveTo(std::pair<std::size_t, std::size_t>) override;
 };
 
 class Knight : public ChessPiece {
 	public :
-		Knight();
-		canMove() override;
+		Knight(Color);
+		bool canMoveTo(std::pair<std::size_t, std::size_t>) override;
 };
 
 class Rook : public ChessPiece {
 	public :
-		Rook();
-		canMove() override;
+		Rook(Color);
+		bool canMoveTo(std::pair<std::size_t, std::size_t>) override;
+	
+	private :
+		bool hasMoved;
 };
 
 class Queen : public ChessPiece {
 	public :
-		Queen();
-		canMove() override;
+		Queen(Color);
+		bool canMoveTo(std::pair<std::size_t, std::size_t>) override;
 };
 
 class King : public ChessPiece {
 	public :
-		King();
-		canMove() override;
+		King(Color);
+		bool canMoveTo(std::pair<std::size_t, std::size_t>) override;
+	
+	private :
+		bool hasMoved;	
 };
 
 #endif

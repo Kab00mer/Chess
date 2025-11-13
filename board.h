@@ -2,14 +2,17 @@
 #define BOARD_H
 
 #include "pieces.h"
+#include <memory>
 
 class ChessBoard {
 	public :
 		ChessBoard();
-		
+
+		bool CheckForCheck() const;
+		bool CheckForMate() const;
 
 	private :
-		Pieces* board[8][8];
+		std::unique_ptr<ChessPiece> squares[8][8];
 };
 
 #endif

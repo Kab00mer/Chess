@@ -1,7 +1,7 @@
 #include "board.h"
 
 ChessBoard::ChessBoard() {
-	for (int i = 0; i < 8; ++i) {
+	for (size_t i = 0; i < 8; ++i) {
 		squares[1][i] = std::unique_ptr<ChessPiece>(new Pawn(Color::White));
 		squares[6][i] = std::unique_ptr<ChessPiece>(new Pawn(Color::Black));
 	}
@@ -26,6 +26,11 @@ ChessBoard::ChessBoard() {
 
 	squares[0][4] = std::unique_ptr<ChessPiece>(new King(Color::White));
 	squares[7][4] = std::unique_ptr<ChessPiece>(new King(Color::Black));
+}
+
+std::pair<PieceType, Color> ChessBoard::returnPieceAt(std::pair<size_t, size_t> pos) const {
+	return squares[pos.first][pos.second] ? squares[pos.first][pos.second]->returnTypeAndColor()
+		: std::make_pair(PieceType::null, Color::none);
 }
 
 bool ChessBoard::CheckForCheck() const {

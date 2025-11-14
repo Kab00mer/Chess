@@ -8,6 +8,7 @@ class ChessBoard {
 	public :
 		ChessBoard();
 
+		std::pair<PieceType, Color> returnPieceAt(std::pair<size_t, size_t>) const;
 		bool CheckForCheck() const;
 		bool CheckForMate() const;
 

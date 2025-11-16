@@ -1,0 +1,5 @@
+add_library(SDL3 STATIC SDL.lib)
+
+target_include_directories(SDL3
+	INTERFACE
+	${CMAKE_CURRENT_SOURCE_DIR})

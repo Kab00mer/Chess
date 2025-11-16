@@ -1,0 +1,12 @@
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/SDL3-shared.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/SDL3_test.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/SDL_uclibc.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/uninstall.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/package.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/package_source.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/edit_cache.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/rebuild_cache.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/list_install_components.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/install.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/install/local.dir
+/home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/build/CMakeFiles/install/strip.dir

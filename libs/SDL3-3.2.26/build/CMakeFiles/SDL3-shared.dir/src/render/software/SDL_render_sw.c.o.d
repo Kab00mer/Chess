@@ -1,0 +1,19 @@
+CMakeFiles/SDL3-shared.dir/src/render/software/SDL_render_sw.c.o: \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_render_sw.c \
+ /usr/include/stdc-predef.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/SDL_internal.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/../SDL_sysrender.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/../../video/SDL_surface_c.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/../../video/SDL_blit.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/../SDL_yuv_sw_c.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_render_sw_c.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_draw.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/../../video/SDL_surface_c.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_blendfillrect.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_blendline.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_blendpoint.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_drawline.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_drawpoint.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_rotate.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/SDL_triangle.h \
+ /home/mryvkin/Desktop/Chess/libs/SDL3-3.2.26/src/render/software/../../video/SDL_pixels_c.h

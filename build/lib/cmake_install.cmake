@@ -1,4 +1,4 @@
-# Install script for directory: /home/mryvkin/Desktop/Chess/libs
+# Install script for directory: /home/mryvkin/Desktop/Chess/lib
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

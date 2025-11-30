@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/mryvkin/Desktop/Chess/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/mryvkin/Desktop/Chess/build/CMakeFiles /home/mryvkin/Desktop/Chess/build/libs//CMakeFiles/progress.marks
-	cd /home/mryvkin/Desktop/Chess/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/all
+	cd /home/mryvkin/Desktop/Chess/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/mryvkin/Desktop/Chess/build/CMakeFiles /home/mryvkin/Desktop/Chess/build/lib//CMakeFiles/progress.marks
+	cd /home/mryvkin/Desktop/Chess/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 lib/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/mryvkin/Desktop/Chess/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/mryvkin/Desktop/Chess/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/clean
+	cd /home/mryvkin/Desktop/Chess/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 lib/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,12 +103,12 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/mryvkin/Desktop/Chess/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/preinstall
+	cd /home/mryvkin/Desktop/Chess/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 lib/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/mryvkin/Desktop/Chess/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/preinstall
+	cd /home/mryvkin/Desktop/Chess/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 lib/preinstall
 .PHONY : preinstall/fast
 
 # clear depends

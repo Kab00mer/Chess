@@ -1,92 +1,92 @@
 #include "pieces.h"
+#include <iostream>
 
-ChessPiece::ChessPiece() : value(0), color(Color::none) {}
+ChessPiece::ChessPiece() : value(0) {}
 
-bool ChessPiece::canMoveTo(std::pair<std::size_t, std::size_t>) const {
+bool ChessPiece::canMoveTo(const size_t x, const size_t y) const {
 	return false;
 }
 
-std::pair<PieceType, Color> ChessPiece::returnTypeAndColor() const {
-	return { PieceType::null, color };
+std::string ChessPiece::returnColorAndType() const {
+	return "";
 }
 
-Pawn::Pawn(Color c) {
+Pawn::Pawn(char c) {
 	value = 1;
 	color = c;
 	hasMoved = false;
 }
 
-bool Pawn::canMoveTo(std::pair<std::size_t, std::size_t>) const {
+bool Pawn::canMoveTo(const size_t x, const size_t y) const {
 	return false;
 }
 
-std::pair<PieceType, Color> Pawn::returnTypeAndColor() const {
-	return { PieceType::P, color };
+std::string Pawn::returnColorAndType() const {
+	return "p" + color;
 }
 
-Bishop::Bishop(Color c) {
+Bishop::Bishop(char c) {
 	value = 3;
 	color = c;
 }
 
-bool Bishop::canMoveTo(std::pair<std::size_t, std::size_t>) const {
+bool Bishop::canMoveTo(const size_t x, const size_t y) const {
 	return false;
 }
 
-std::pair<PieceType, Color> Bishop::returnTypeAndColor() const {
-	return { PieceType::B, color };
+std::string Bishop::returnColorAndType() const {
+	return color + "b";
 }
 
-Knight::Knight(Color c) {
+Knight::Knight(char c) {
 	value = 3;
 	color = c;
 }
-
-bool Knight::canMoveTo(std::pair<std::size_t, std::size_t>) const {
+bool Knight::canMoveTo(const size_t x, const size_t y) const {
 	return false;
 }
 
-std::pair<PieceType, Color> Knight::returnTypeAndColor() const {
-	return { PieceType::N, color };
+std::string Knight::returnColorAndType() const {
+	return color + "n";
 }
 
-Rook::Rook(Color c) {
+Rook::Rook(char c) {
 	value = 5;
 	color = c;
 	hasMoved = false;
 }
 
-bool Rook::canMoveTo(std::pair<std::size_t, std::size_t>) const {
+bool Rook::canMoveTo(const size_t x, const size_t y) const {
 	return false;
 }
 
-std::pair<PieceType, Color> Rook::returnTypeAndColor() const {
-	return { PieceType::R, color };
+std::string Rook::returnColorAndType() const {
+	return color + "r";
 }
 
-Queen::Queen(Color c) {
+Queen::Queen(char c) {
 	value = 8;
 	color = c;
 }
 
-bool Queen::canMoveTo(std::pair<std::size_t, std::size_t>) const {
+bool Queen::canMoveTo(const size_t x, const size_t y) const {
 	return false;
 }
 
-std::pair<PieceType, Color> Queen::returnTypeAndColor() const {
-	return { PieceType::Q, color };
+std::string Queen::returnColorAndType() const {
+	return color + "q"; 
 }
 
-King::King(Color c) {
+King::King(char c) {
 	value = 0;
 	color = c;
 	hasMoved = false;
 }
 
-bool King::canMoveTo(std::pair<std::size_t, std::size_t>) const {
+bool King::canMoveTo(const size_t x, const size_t y) const {
 	return false;
 }
 
-std::pair<PieceType, Color> King::returnTypeAndColor() const {
-	return { PieceType::K, color };
+std::string King::returnColorAndType() const {
+	return color + "k";
 }

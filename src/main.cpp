@@ -3,16 +3,12 @@
 
 int main(int argc, char* argv[]) {
 	ChessBoard board;
-	{
-		ChessBoard* ptr = &board;	
-		startApp(ptr);	
-	}
-	continueApp();
+	ChessBoard* ptr = &board;	
+	startApp(ptr);	
 	
-	bool running = false;
-	//bool running = true;
+	bool running = true;
 	while (running) {
-		//continueApp();
+		continueApp();
 
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {

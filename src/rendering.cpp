@@ -1,6 +1,7 @@
 #include "rendering.h"
 #include "SDL3/SDL.h"
 #include <map>
+#include <iostream>
 
 const int WINDOW_WIDTH = 850;
 const int WINDOW_HEIGHT = 850;
@@ -22,32 +23,39 @@ void startApp(ChessBoard* boardPtr) {
 	
 	//initialize size of squares for UI
 	for (size_t i = 0; i < NUM_OF_SQUARES; ++i) {
-		rects[i].x = (i % 8) * SQUARE_SIZE + PADDING;
-		rects[i].y = static_cast<size_t>(i / 8) * SQUARE_SIZE + PADDING;
+		std::cout << "(" << i % 8 << ", " << static_cast<size_t>(i / 8) << ")" << '\n';
+		rects[i].x = static_cast<size_t>(i / 8) * SQUARE_SIZE + PADDING;
+		rects[i].y = (i % 8) * SQUARE_SIZE + PADDING;
 		rects[i].w = SQUARE_SIZE;
 		rects[i].h = SQUARE_SIZE;
 	}
 
 	//loading image paths 
-	char* bmp_paths[NUM_OF_PIECES];
-	SDL_asprintf(&(bmp_paths[0]), "%simages/wp", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[1]), "%simages/bp", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[2]), "%simages/wb", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[3]), "%simages/bb", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[4]), "%simages/wn", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[5]), "%simages/bn", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[6]), "%simages/wr", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[7]), "%simages/br", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[8]), "%simages/wq", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[9]), "%simages/bq", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[10]), "%simages/wk", SDL_GetBasePath());
-	SDL_asprintf(&(bmp_paths[11]), "%simages/bk", SDL_GetBasePath());
+	std::string basePath = SDL_GetBasePath();
+	basePath = basePath.substr(0, basePath.length() - 6);
+	const char* projectRoot = basePath.c_str();
 
-	//image paths must be loaded to surfaces and freed
+	char* bmp_paths[NUM_OF_PIECES];
+	SDL_asprintf(&(bmp_paths[0]), "%simages/wp.bmp", projectRoot);
+	SDL_asprintf(&(bmp_paths[1]), "%simages/bp.bmp", projectRoot); 
+	SDL_asprintf(&(bmp_paths[2]), "%simages/wb.bmp", projectRoot); 
+	SDL_asprintf(&(bmp_paths[3]), "%simages/bb.bmp", projectRoot); 
+	SDL_asprintf(&(bmp_paths[4]), "%simages/wn.bmp", projectRoot); 
+	SDL_asprintf(&(bmp_paths[5]), "%simages/bn.bmp", projectRoot); 
+	SDL_asprintf(&(bmp_paths[6]), "%simages/wr.bmp", projectRoot); 
+	SDL_asprintf(&(bmp_paths[7]), "%simages/br.bmp", projectRoot); 
+	SDL_asprintf(&(bmp_paths[8]), "%simages/wq.bmp", projectRoot); 
+	SDL_asprintf(&(bmp_paths[9]), "%simages/bq.bmp", projectRoot);
+	SDL_asprintf(&(bmp_paths[10]), "%simages/wk.bmp", projectRoot); 
+	SDL_asprintf(&(bmp_paths[11]), "%simages/bk.bmp", projectRoot); 
+
+	//image paths must be loaded to surfaces
 	SDL_Surface* surfaces[NUM_OF_PIECES];
 	for (size_t i = 0; i < NUM_OF_PIECES; ++i) {
-		surfaces[i] = SDL_LoadBMP(bmp_paths[i]);
-		SDL_free(bmp_paths[i]);
+		std::cout << bmp_paths[i] << '\n';
+		SDL_Surface* surface = SDL_LoadBMP(bmp_paths[i]);
+		if (!surface) std::cout << "ERROR LOADING BMP SURFACE" << '\n';
+		surfaces[i] = surface;
 	}
 
 	//create textures from surfaces
@@ -86,16 +94,21 @@ void continueApp() {
 	//go through all of the board's squares and draw pieces
 	for (size_t i = 0; i < 8; ++i) {
 		for (size_t j = 0; j < 8; ++j) {
-			std::string piece = board->getPieceAt(i, j);
+			std::pair<char, char> piece = board->getPieceAt(i, j);
 
-			if (piece != "") {
+			if (piece.first != '0') {
 				SDL_FRect rect;
 				rect.x = SQUARE_SIZE * i + PADDING;
 				rect.y = SQUARE_SIZE * j + PADDING;
 				rect.w = SQUARE_SIZE;
 				rect.h = SQUARE_SIZE;
 
-				SDL_RenderTexture(renderer, textures[piece], NULL, &rect);
+				std::string str = "";
+				str.push_back(piece.first);
+				str.push_back(piece.second);
+				//std::cout << str << '\n';
+
+				SDL_RenderTexture(renderer, textures[str], NULL, &rect);
 			}					
 		}
 	}

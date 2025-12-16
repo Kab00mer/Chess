@@ -30,17 +30,26 @@ ChessBoard::ChessBoard() {
 	squares[7][4] = std::unique_ptr<ChessPiece>(new King('b'));
 }
 
-std::string ChessBoard::getPieceAt(const size_t x, const size_t y) const {
-	std::cout << x << y;
-	std::cout << (squares[x][y] ? "STRING:" + squares[x][y]->returnColorAndType() : "empty");
-	std::cout << '\n';
-	return squares[x][y] ? squares[x][y]->returnColorAndType() : "";
+std::pair<char, char> ChessBoard::getPieceAt(const size_t x, const size_t y) const {
+	/*
+	std::cout << x << y << " : ";
+	if (squares[x][y]) {
+		std::pair<char, char> piece = squares[x][y]->returnColorAndType();
+		std::cout << piece.first << piece.second << '\n';
+
+	} else {
+		std::cout << "empty" << '\n';
+	}
+	*/
+	return squares[x][y] ? squares[x][y]->returnColorAndType() : std::make_pair('0', '0');
 }
 
 bool ChessBoard::CheckForCheck() const {
+	//will do later
 	return false;
 }
 
 bool ChessBoard::CheckForMate() const {
+	//will do later
 	return false;
 }

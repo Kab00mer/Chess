@@ -8,7 +8,7 @@ class ChessBoard {
 	public :
 		ChessBoard();
 
-		std::string getPieceAt(const size_t, const size_t) const;
+		std::pair<char, char> getPieceAt(const size_t, const size_t) const;
 		bool CheckForCheck() const;
 		bool CheckForMate() const;
 

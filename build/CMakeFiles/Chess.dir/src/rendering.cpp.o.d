@@ -112,46 +112,12 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: \
  /usr/include/c++/13/bits/charconv.h \
  /usr/include/c++/13/bits/functional_hash.h \
  /usr/include/c++/13/bits/hash_bytes.h \
- /usr/include/c++/13/bits/basic_string.tcc /usr/include/c++/13/memory \
- /usr/include/c++/13/bits/stl_tempbuf.h \
- /usr/include/c++/13/bits/stl_uninitialized.h \
- /usr/include/c++/13/bits/stl_raw_storage_iter.h \
- /usr/include/c++/13/bits/align.h /usr/include/c++/13/bit \
+ /usr/include/c++/13/bits/basic_string.tcc /usr/local/include/SDL3/SDL.h \
+ /usr/local/include/SDL3/SDL_stdinc.h \
+ /usr/local/include/SDL3/SDL_platform_defines.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /usr/include/c++/13/bits/uses_allocator.h \
- /usr/include/c++/13/bits/unique_ptr.h /usr/include/c++/13/tuple \
- /usr/include/c++/13/bits/shared_ptr.h \
- /usr/include/c++/13/bits/shared_ptr_base.h /usr/include/c++/13/typeinfo \
- /usr/include/c++/13/bits/allocated_ptr.h \
- /usr/include/c++/13/ext/aligned_buffer.h \
- /usr/include/c++/13/ext/atomicity.h \
- /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h \
- /usr/include/x86_64-linux-gnu/c++/13/bits/gthr-default.h \
- /usr/include/pthread.h /usr/include/sched.h \
- /usr/include/x86_64-linux-gnu/bits/sched.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
- /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
- /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/timex.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
- /usr/include/x86_64-linux-gnu/bits/setjmp.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
- /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
- /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
- /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
- /usr/include/c++/13/ext/concurrence.h /usr/include/c++/13/exception \
- /usr/include/c++/13/bits/exception_ptr.h \
- /usr/include/c++/13/bits/cxxabi_init_exception.h \
- /usr/include/c++/13/bits/nested_exception.h \
- /usr/include/c++/13/bits/shared_ptr_atomic.h \
- /usr/include/c++/13/bits/atomic_base.h \
- /usr/include/c++/13/bits/atomic_lockfree_defines.h \
- /usr/include/c++/13/backward/auto_ptr.h /usr/local/include/SDL3/SDL.h \
- /usr/local/include/SDL3/SDL_stdinc.h \
- /usr/local/include/SDL3/SDL_platform_defines.h /usr/include/string.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-least.h /usr/include/string.h \
  /usr/include/strings.h /usr/local/include/SDL3/SDL_begin_code.h \
  /usr/local/include/SDL3/SDL_close_code.h \
  /usr/local/include/SDL3/SDL_assert.h \
@@ -193,11 +159,32 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: \
  /usr/local/include/SDL3/SDL_timer.h /usr/local/include/SDL3/SDL_tray.h \
  /usr/local/include/SDL3/SDL_version.h \
  /usr/local/include/SDL3/SDL_oldnames.h /usr/include/c++/13/map \
- /usr/include/c++/13/bits/stl_tree.h /usr/include/c++/13/bits/stl_map.h \
+ /usr/include/c++/13/bits/stl_tree.h \
+ /usr/include/c++/13/ext/aligned_buffer.h \
+ /usr/include/c++/13/bits/stl_map.h /usr/include/c++/13/tuple \
+ /usr/include/c++/13/bits/uses_allocator.h \
  /usr/include/c++/13/bits/stl_multimap.h \
  /usr/include/c++/13/bits/erase_if.h /usr/include/c++/13/iostream \
  /usr/include/c++/13/ostream /usr/include/c++/13/ios \
- /usr/include/c++/13/bits/ios_base.h \
+ /usr/include/c++/13/exception /usr/include/c++/13/bits/exception_ptr.h \
+ /usr/include/c++/13/bits/cxxabi_init_exception.h \
+ /usr/include/c++/13/typeinfo /usr/include/c++/13/bits/nested_exception.h \
+ /usr/include/c++/13/bits/ios_base.h /usr/include/c++/13/ext/atomicity.h \
+ /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h \
+ /usr/include/x86_64-linux-gnu/c++/13/bits/gthr-default.h \
+ /usr/include/pthread.h /usr/include/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
+ /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
+ /usr/include/x86_64-linux-gnu/bits/timex.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+ /usr/include/x86_64-linux-gnu/bits/setjmp.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+ /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+ /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
+ /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
  /usr/include/c++/13/bits/locale_classes.h \
  /usr/include/c++/13/bits/locale_classes.tcc \
  /usr/include/c++/13/system_error \

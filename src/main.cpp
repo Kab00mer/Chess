@@ -1,21 +1,14 @@
-#include "SDL3/SDL.h"
-#include "rendering.h"
+#include "input.cpp"
 
 int main(int argc, char* argv[]) {
-	ChessBoard board;
-	ChessBoard* ptr = &board;	
+	ChessBoard* ptr = new ChessBoard();	
 	startApp(ptr);	
+	ptr->printBoard();
 	
 	bool running = true;
 	while (running) {
 		continueApp();
-
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_EVENT_QUIT) {
-				running = false;
-			}
-		}
+		running = !checkInput();
 	}
 
 	stopApp();

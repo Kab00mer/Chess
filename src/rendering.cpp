@@ -16,6 +16,8 @@ static SDL_FRect rects[NUM_OF_SQUARES];
 static std::map<std::string, SDL_Texture*> textures;
 
 static ChessBoard* board;
+static std::pair<int, int> mousePos = {8, 8};
+static std::pair<int, int> selectedSquare = {8, 8};
 
 void startApp(ChessBoard* boardPtr) {
 	board = boardPtr;
@@ -23,9 +25,9 @@ void startApp(ChessBoard* boardPtr) {
 	
 	//initialize size of squares for UI
 	for (size_t i = 0; i < NUM_OF_SQUARES; ++i) {
-		std::cout << "(" << i % 8 << ", " << static_cast<size_t>(i / 8) << ")" << '\n';
-		rects[i].x = static_cast<size_t>(i / 8) * SQUARE_SIZE + PADDING;
-		rects[i].y = (i % 8) * SQUARE_SIZE + PADDING;
+		//std::cout << "(" << i % 8 << ", " << static_cast<size_t>(i / 8) << ")" << '\n';
+		rects[i].x = (i % 8) * SQUARE_SIZE + PADDING;
+		rects[i].y = static_cast<size_t>(i / 8) * SQUARE_SIZE + PADDING;
 		rects[i].w = SQUARE_SIZE;
 		rects[i].h = SQUARE_SIZE;
 	}
@@ -52,7 +54,7 @@ void startApp(ChessBoard* boardPtr) {
 	//image paths must be loaded to surfaces
 	SDL_Surface* surfaces[NUM_OF_PIECES];
 	for (size_t i = 0; i < NUM_OF_PIECES; ++i) {
-		std::cout << bmp_paths[i] << '\n';
+		//std::cout << bmp_paths[i] << '\n';
 		SDL_Surface* surface = SDL_LoadBMP(bmp_paths[i]);
 		if (!surface) std::cout << "ERROR LOADING BMP SURFACE" << '\n';
 		surfaces[i] = surface;
@@ -83,7 +85,7 @@ void continueApp() {
 	SDL_RenderClear(renderer);
 
 	//drawing checkered squares
-	size_t j = 0;
+	size_t j = board->isUserWhite() ? 1 : 0; //switch this depending on the users color
 	for (size_t i = 0; i < NUM_OF_SQUARES; ++i) {
 		(i + j) % 2 == 0 ? SDL_SetRenderDrawColor(renderer, 20, 20, 20, SDL_ALPHA_OPAQUE) 
 			: SDL_SetRenderDrawColor(renderer, 220, 220, 220, SDL_ALPHA_OPAQUE);
@@ -94,23 +96,18 @@ void continueApp() {
 	//go through all of the board's squares and draw pieces
 	for (size_t i = 0; i < 8; ++i) {
 		for (size_t j = 0; j < 8; ++j) {
-			std::pair<char, char> piece = board->getPieceAt(i, j);
-
-			if (piece.first != '0') {
-				SDL_FRect rect;
-				rect.x = SQUARE_SIZE * i + PADDING;
-				rect.y = SQUARE_SIZE * j + PADDING;
-				rect.w = SQUARE_SIZE;
-				rect.h = SQUARE_SIZE;
-
-				std::string str = "";
-				str.push_back(piece.first);
-				str.push_back(piece.second);
-				//std::cout << str << '\n';
-
-				SDL_RenderTexture(renderer, textures[str], NULL, &rect);
-			}					
+			if (i != selectedSquare.first || j != selectedSquare.second) {
+				std::pair<char, char> piece = board->getPieceAt(i, j);
+				//std::cout << piece.first << piece.second << '\n';
+				renderPieceAt(piece.first, piece.second, i, j);
+			}
 		}
+	}
+
+	//Render stuff for the selected piece
+	if (selectedSquare.first != 8) {
+		std::pair<char, char> selectedPiece = board->getPieceAt(selectedSquare.first, selectedSquare.second);
+		renderPieceAt(selectedPiece.first, selectedPiece.second, mousePos.first, mousePos.second);
 	}
 
 	SDL_RenderPresent(renderer);
@@ -119,4 +116,43 @@ void continueApp() {
 void stopApp() {
 	SDL_Quit();
 	//run through all the textures and destruct them	
+}
+
+void renderPieceAt(char color, char type, int x, int y) {
+	if (color != '0') {
+			std::string str = "";
+			str.push_back(color);
+			str.push_back(type);
+			SDL_RenderTexture(renderer, textures[str], NULL, &rects[x * 8 + y]);
+	}
+}
+
+void setCurrentMousePos(const SDL_FPoint& point) {
+	//converts SDL's point to a coordinate
+	bool found = false;
+	int i = 0;
+	int j = 0;
+	while (!found && i < 8) {
+		j = 0;
+		while (!found && j < 8) {
+			if (SDL_PointInRectFloat(&point, &rects[i * 8 + j])) {
+				found = true;
+			} else {
+				++j;
+			}
+		}
+		if (!found) ++i;	
+	}
+	std::cout << i << ", " << j << '\n';
+	mousePos = std::make_pair(i, j);
+}
+
+void selectPiece() {
+	selectedSquare = mousePos;	
+}
+
+void releasePiece() {
+	if (selectedSquare != mousePos) {
+		board->movePiece(selectedSquare.first, selectedSquare.second, mousePos.first, mousePos.second);
+	} 
 }

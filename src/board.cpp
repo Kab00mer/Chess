@@ -1,55 +1,100 @@
 #include "board.h"
 #include <iostream>
 
-ChessBoard::ChessBoard() {
+ChessBoard::ChessBoard(bool white) {
+	std::cout << white << '\n';
+	userIsWhite = white;
+	char user, opponent;
+	if (white) {
+		user = 'w';
+		opponent = 'b';
+	} else {
+		user = 'b';
+		opponent  = 'w';
+	}
+
 	//creates the classic chessboard setup
 	for (size_t i = 0; i < 8; ++i) {
-		squares[1][i] = std::unique_ptr<ChessPiece>(new Pawn('w'));
-		squares[6][i] = std::unique_ptr<ChessPiece>(new Pawn('b'));
+		squares[1][i] = new Pawn(opponent);
+		squares[6][i] = new Pawn(user);
 	}
 			
-	squares[0][0] = std::unique_ptr<ChessPiece>(new Rook('w'));
-	squares[0][7] = std::unique_ptr<ChessPiece>(new Rook('w'));
-	squares[7][0] = std::unique_ptr<ChessPiece>(new Rook('b'));
-	squares[7][7] = std::unique_ptr<ChessPiece>(new Rook('b'));
+	squares[0][0] = new Rook(opponent);
+	squares[0][7] = new Rook(opponent);
+	squares[7][0] = new Rook(user);
+	squares[7][7] = new Rook(user);
 
-	squares[0][1] = std::unique_ptr<ChessPiece>(new Knight('w'));
-	squares[0][6] = std::unique_ptr<ChessPiece>(new Knight('w'));
-	squares[7][1] = std::unique_ptr<ChessPiece>(new Knight('b'));
-	squares[7][6] = std::unique_ptr<ChessPiece>(new Knight('b'));
+	squares[0][1] = new Knight(opponent);
+	squares[0][6] = new Knight(opponent);
+	squares[7][1] = new Knight(user);
+	squares[7][6] = new Knight(user);
 
-	squares[0][2] = std::unique_ptr<ChessPiece>(new Bishop('w'));
-	squares[0][5] = std::unique_ptr<ChessPiece>(new Bishop('w'));
-	squares[7][2] = std::unique_ptr<ChessPiece>(new Bishop('b'));
-	squares[7][5] = std::unique_ptr<ChessPiece>(new Bishop('b'));
+	squares[0][2] = new Bishop(opponent);
+	squares[0][5] = new Bishop(opponent);
+	squares[7][2] = new Bishop(user);
+	squares[7][5] = new Bishop(user);
 
-	squares[0][3] = std::unique_ptr<ChessPiece>(new Queen('w'));
-	squares[7][3] = std::unique_ptr<ChessPiece>(new Queen('b'));
+	squares[0][3] = new Queen(opponent);
+	squares[7][3] = new Queen(user);
 
-	squares[0][4] = std::unique_ptr<ChessPiece>(new King('w'));
-	squares[7][4] = std::unique_ptr<ChessPiece>(new King('b'));
+	squares[0][4] = new King(opponent);
+	squares[7][4] = new King(user);
+}
+
+ChessBoard::~ChessBoard() {
+	for (int i = 0; i < 8; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			if (squares[i][j]) {
+				delete squares[i][j];
+			}
+		}
+	}
 }
 
 std::pair<char, char> ChessBoard::getPieceAt(const size_t x, const size_t y) const {
-	/*
-	std::cout << x << y << " : ";
-	if (squares[x][y]) {
-		std::pair<char, char> piece = squares[x][y]->returnColorAndType();
-		std::cout << piece.first << piece.second << '\n';
-
-	} else {
-		std::cout << "empty" << '\n';
-	}
-	*/
 	return squares[x][y] ? squares[x][y]->returnColorAndType() : std::make_pair('0', '0');
 }
 
-bool ChessBoard::CheckForCheck() const {
+bool ChessBoard::isUserWhite() const { return userIsWhite; }
+
+bool ChessBoard::movePiece(int x1, int y1, int x2, int y2) {
+	std::cout << "CALLED" << '\n';
+	if (squares[x1][y1]) {
+		/*
+		if (squares[x1][y1]->canMoveTo(x2, y2)) {
+			//also do a check for check	
+			return true;
+		}
+		*/
+		delete squares[x2][y2];
+		squares[x2][y2] = squares[x1][y1];
+		squares[x1][y1] = nullptr;
+	}
+
+	return false;
+}
+
+bool ChessBoard::checkForCheck() const {
 	//will do later
 	return false;
 }
 
-bool ChessBoard::CheckForMate() const {
+bool ChessBoard::checkForMate() const {
 	//will do later
 	return false;
+}
+
+void ChessBoard::printBoard() const {
+	for (int i = 0; i < 8; ++i) {
+		std::cout << "| ";
+		for (int j = 0; j < 8; ++j) {
+			if (squares[i][j]) {
+				std::pair<char, char> piece = squares[i][j]->returnColorAndType();
+				std::cout << piece.first << piece.second << " ";
+			} else {
+				std::cout << "00 ";
+			}
+		}
+		std::cout << "|\n";
+	}
 }

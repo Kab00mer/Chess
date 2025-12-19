@@ -2,7 +2,6 @@
 #include <iostream>
 
 ChessBoard::ChessBoard(bool white) {
-	std::cout << white << '\n';
 	userIsWhite = white;
 	char user, opponent;
 	if (white) {
@@ -13,10 +12,20 @@ ChessBoard::ChessBoard(bool white) {
 		opponent  = 'w';
 	}
 
-	//creates the classic chessboard setup
 	for (size_t i = 0; i < 8; ++i) {
 		squares[1][i] = new Pawn(opponent);
 		squares[6][i] = new Pawn(user);
+
+		//collision mapping
+		for (size_t j = 0; j < 8; ++j) {
+			if (i < 2) {
+				collisionMap[i][j] = opponent;
+			} else if (i > 5) {
+				collisionMap[i][j] = user;
+			} else {
+				collisionMap[i][j] = '0';
+			}
+		}
 	}
 			
 	squares[0][0] = new Rook(opponent);
@@ -44,9 +53,7 @@ ChessBoard::ChessBoard(bool white) {
 ChessBoard::~ChessBoard() {
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
-			if (squares[i][j]) {
-				delete squares[i][j];
-			}
+			if (squares[i][j]);
 		}
 	}
 }
@@ -55,23 +62,25 @@ std::pair<char, char> ChessBoard::getPieceAt(const size_t x, const size_t y) con
 	return squares[x][y] ? squares[x][y]->returnColorAndType() : std::make_pair('0', '0');
 }
 
+std::set<std::pair<int, int>> ChessBoard::getMovesForPiece(const size_t x, const size_t y) const {
+	return squares[x][y] ? squares[x][y]->getPossibleMoves(collisionMap, x, y) : std::set<std::pair<int, int>>();
+}
+
 bool ChessBoard::isUserWhite() const { return userIsWhite; }
 
-bool ChessBoard::movePiece(int x1, int y1, int x2, int y2) {
-	std::cout << "CALLED" << '\n';
+void ChessBoard::movePiece(int x1, int y1, int x2, int y2) {
 	if (squares[x1][y1]) {
-		/*
-		if (squares[x1][y1]->canMoveTo(x2, y2)) {
+		//if (squares[x1][y1]->canMoveTo(x2, y2)) {
 			//also do a check for check	
-			return true;
-		}
-		*/
+		//	return true;
+		//}
 		delete squares[x2][y2];
 		squares[x2][y2] = squares[x1][y1];
 		squares[x1][y1] = nullptr;
-	}
 
-	return false;
+		collisionMap[x2][y2] = collisionMap[x1][y1];
+		collisionMap[x1][y1] = '0';
+	}
 }
 
 bool ChessBoard::checkForCheck() const {
@@ -94,6 +103,17 @@ void ChessBoard::printBoard() const {
 			} else {
 				std::cout << "00 ";
 			}
+		}
+		std::cout << "|\n";
+	}
+}
+
+void ChessBoard::printCollisionBoard() const {
+	std::cout << '\n';
+	for (int i = 0; i < 8; ++i) {
+		std::cout << "| ";
+		for (int j = 0; j < 8; ++j) {
+			std::cout << collisionMap[i][j] << " ";
 		}
 		std::cout << "|\n";
 	}

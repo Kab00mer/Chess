@@ -1,6 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <set>
 #include "pieces.h"
 
 class ChessBoard {
@@ -8,17 +9,22 @@ class ChessBoard {
 		ChessBoard(bool white = true);
 		~ChessBoard();
 
-		std::pair<char, char> getPieceAt(const size_t, const size_t) const;
 		bool isUserWhite() const;
 
-		bool movePiece(int, int, int, int);
+		std::pair<char, char> getPieceAt(const size_t, const size_t) const;
+		std::set<std::pair<int, int>> getMovesForPiece(const size_t, const size_t) const;
+
+		void movePiece(int, int, int, int);
 		bool checkForCheck() const;
 		bool checkForMate() const;
 
+
 		void printBoard() const;
+		void printCollisionBoard() const;
 
 	private :
 		ChessPiece* squares[8][8];
+		char collisionMap[8][8];
 		bool userIsWhite;
 };
 

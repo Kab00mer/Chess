@@ -2,6 +2,7 @@
 #include "SDL3/SDL.h"
 #include <map>
 #include <iostream>
+#include <set>
 
 const int WINDOW_WIDTH = 850;
 const int WINDOW_HEIGHT = 850;
@@ -16,8 +17,10 @@ static SDL_FRect rects[NUM_OF_SQUARES];
 static std::map<std::string, SDL_Texture*> textures;
 
 static ChessBoard* board;
-static std::pair<int, int> mousePos = {8, 8};
+static std::pair<float, float> mousePos = {0.0f, 0.0f};
 static std::pair<int, int> selectedSquare = {8, 8};
+static std::set<std::pair<int, int>> possibleMoves;
+static bool holding = false;
 
 void startApp(ChessBoard* boardPtr) {
 	board = boardPtr;
@@ -25,7 +28,6 @@ void startApp(ChessBoard* boardPtr) {
 	
 	//initialize size of squares for UI
 	for (size_t i = 0; i < NUM_OF_SQUARES; ++i) {
-		//std::cout << "(" << i % 8 << ", " << static_cast<size_t>(i / 8) << ")" << '\n';
 		rects[i].x = (i % 8) * SQUARE_SIZE + PADDING;
 		rects[i].y = static_cast<size_t>(i / 8) * SQUARE_SIZE + PADDING;
 		rects[i].w = SQUARE_SIZE;
@@ -54,7 +56,6 @@ void startApp(ChessBoard* boardPtr) {
 	//image paths must be loaded to surfaces
 	SDL_Surface* surfaces[NUM_OF_PIECES];
 	for (size_t i = 0; i < NUM_OF_PIECES; ++i) {
-		//std::cout << bmp_paths[i] << '\n';
 		SDL_Surface* surface = SDL_LoadBMP(bmp_paths[i]);
 		if (!surface) std::cout << "ERROR LOADING BMP SURFACE" << '\n';
 		surfaces[i] = surface;
@@ -93,21 +94,32 @@ void continueApp() {
 		if (i % 8 == 7) { ++j; }
 	}
 
+	//drawing tiles of selected piece
+	SDL_SetRenderDrawColor(renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
+	SDL_RenderFillRect(renderer, &rects[selectedSquare.first * 8 + selectedSquare.second]);
+
+	//drawing tiles of moves piece can take
+	for (std::pair<int, int> square : possibleMoves) {
+		SDL_RenderFillRect(renderer, &rects[square.first * 8 + square.second]);
+	}
+
 	//go through all of the board's squares and draw pieces
 	for (size_t i = 0; i < 8; ++i) {
 		for (size_t j = 0; j < 8; ++j) {
 			if (i != selectedSquare.first || j != selectedSquare.second) {
 				std::pair<char, char> piece = board->getPieceAt(i, j);
-				//std::cout << piece.first << piece.second << '\n';
-				renderPieceAt(piece.first, piece.second, i, j);
+				renderPieceAtCoord(piece.first, piece.second, i, j);
+			} else if (!holding) {
+				std::pair<char, char> piece = board->getPieceAt(i, j);
+				renderPieceAtCoord(piece.first, piece.second, i, j);
 			}
 		}
 	}
 
 	//Render stuff for the selected piece
-	if (selectedSquare.first != 8) {
+	if (holding) {
 		std::pair<char, char> selectedPiece = board->getPieceAt(selectedSquare.first, selectedSquare.second);
-		renderPieceAt(selectedPiece.first, selectedPiece.second, mousePos.first, mousePos.second);
+		renderPieceAtMouse(selectedPiece.first, selectedPiece.second);
 	}
 
 	SDL_RenderPresent(renderer);
@@ -118,17 +130,39 @@ void stopApp() {
 	//run through all the textures and destruct them	
 }
 
-void renderPieceAt(char color, char type, int x, int y) {
+void renderPieceAtCoord(char color, char type, int x, int y) {
 	if (color != '0') {
-			std::string str = "";
-			str.push_back(color);
-			str.push_back(type);
-			SDL_RenderTexture(renderer, textures[str], NULL, &rects[x * 8 + y]);
+		std::string str = "";
+		str.push_back(color);
+		str.push_back(type);
+
+		SDL_RenderTexture(renderer, textures[str], NULL, &rects[x * 8 + y]);
 	}
 }
 
-void setCurrentMousePos(const SDL_FPoint& point) {
+void renderPieceAtMouse(char color, char type) {
+	if (color != '0') {
+		std::string str = "";
+		str.push_back(color);
+		str.push_back(type);
+
+		SDL_FRect r;
+		r.x = mousePos.first - SQUARE_SIZE / 2;
+		r.y = mousePos.second - SQUARE_SIZE / 2;
+		r.w = SQUARE_SIZE;
+		r.h = SQUARE_SIZE;
+		
+		SDL_RenderTexture(renderer, textures[str], NULL, &r);
+	}
+}
+
+void setCurrentMousePos(const float x, const float y) {
+	mousePos = std::make_pair(x, y);
+}
+
+std::pair<int, int> convertMousePosToCoords() {
 	//converts SDL's point to a coordinate
+	SDL_FPoint point = {mousePos.first, mousePos.second};
 	bool found = false;
 	int i = 0;
 	int j = 0;
@@ -143,16 +177,35 @@ void setCurrentMousePos(const SDL_FPoint& point) {
 		}
 		if (!found) ++i;	
 	}
-	std::cout << i << ", " << j << '\n';
-	mousePos = std::make_pair(i, j);
+
+	return {i, j};
 }
 
 void selectPiece() {
-	selectedSquare = mousePos;	
+	std::pair<int, int> coord = convertMousePosToCoords();
+
+	if (coord.first != 8) {
+		std::pair<char, char> piece = board->getPieceAt(coord.first, coord.second);
+
+		if (piece.first != '0') {
+			possibleMoves = board->getMovesForPiece(coord.first, coord.second);
+			holding = true;
+			selectedSquare = coord;
+		}
+	}
 }
 
 void releasePiece() {
-	if (selectedSquare != mousePos) {
-		board->movePiece(selectedSquare.first, selectedSquare.second, mousePos.first, mousePos.second);
-	} 
+	std::pair<int, int> coord = convertMousePosToCoords();
+
+	if (coord.first != 8 && selectedSquare.first != 8 
+			&& selectedSquare != coord && possibleMoves.count(coord) != 0) {
+		board->movePiece(selectedSquare.first, selectedSquare.second, coord.first, coord.second);
+
+		possibleMoves.clear();
+		selectedSquare.first = 8;
+		selectedSquare.second = 8;
+	}
+
+	holding = false;
 }

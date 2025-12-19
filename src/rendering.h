@@ -4,8 +4,10 @@
 void startApp(ChessBoard*);
 void continueApp();
 void stopApp();
-void renderPieceAt(char, char, int, int);
+void renderPieceAtCoord(char, char, int, int);
+void renderPieceAtMouse(char, char);
 
-void setCurrentMousePos(const SDL_FPoint&);
+void setCurrentMousePos(const float, const float);
+std::pair<int, int> convertMousePosToCoords();
 void selectPiece();
 void releasePiece();

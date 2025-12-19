@@ -3,12 +3,14 @@
 
 #include <utility>
 #include <string>
+#include <set>
 
 class ChessPiece {
 	public :
 		ChessPiece();
 		virtual bool canMoveTo(const size_t, const size_t) const;
 		virtual std::pair<char, char> returnColorAndType() const;
+		virtual std::set<std::pair<int, int>> getPossibleMoves(const char (*)[8], int, int) const;
 
 	protected :
 		int value;
@@ -20,6 +22,7 @@ class Pawn : public ChessPiece {
 		Pawn(char);
 		bool canMoveTo(const size_t, const size_t) const override;
 		std::pair<char, char> returnColorAndType() const override;
+		std::set<std::pair<int, int>> getPossibleMoves(const char (*)[8], int, int) const override;
 	
 	private :
 		bool hasMoved;
@@ -30,6 +33,7 @@ class Bishop : public ChessPiece {
 		Bishop(char);
 		bool canMoveTo(const size_t, const size_t) const override;
 		std::pair<char, char> returnColorAndType() const override;
+		std::set<std::pair<int, int>> getPossibleMoves(const char (*)[8], int, int) const override;
 };
 
 class Knight : public ChessPiece {
@@ -37,6 +41,7 @@ class Knight : public ChessPiece {
 		Knight(char);
 		bool canMoveTo(const size_t, const size_t) const override;
 		std::pair<char, char> returnColorAndType() const override;
+		std::set<std::pair<int, int>> getPossibleMoves(const char (*)[8], int, int) const override;
 };
 
 class Rook : public ChessPiece {
@@ -44,6 +49,7 @@ class Rook : public ChessPiece {
 		Rook(char);
 		bool canMoveTo(const size_t, const size_t) const override;
 		std::pair<char, char> returnColorAndType() const override;
+		std::set<std::pair<int, int>> getPossibleMoves(const char (*)[8], int, int) const override;
 	
 	private :
 		bool hasMoved;
@@ -54,6 +60,7 @@ class Queen : public ChessPiece {
 		Queen(char);
 		bool canMoveTo(const size_t, const size_t) const override;
 		std::pair<char, char> returnColorAndType() const override;
+		std::set<std::pair<int, int>> getPossibleMoves(const char (*)[8], int, int) const override;
 };
 
 class King : public ChessPiece {
@@ -61,6 +68,7 @@ class King : public ChessPiece {
 		King(char);
 		bool canMoveTo(const size_t, const size_t) const override;
 		std::pair<char, char> returnColorAndType() const override;
+		std::set<std::pair<int, int>> getPossibleMoves(const char (*)[8], int, int) const override;
 	
 	private :
 		bool hasMoved;	

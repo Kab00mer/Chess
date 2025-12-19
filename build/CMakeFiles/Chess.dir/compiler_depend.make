@@ -20,6 +20,7 @@ CMakeFiles/Chess.dir/src/board.cpp.o: /home/mryvkin/Desktop/Chess/src/board.cpp 
   /usr/include/c++/13/bits/cpp_type_traits.h \
   /usr/include/c++/13/bits/cxxabi_forced.h \
   /usr/include/c++/13/bits/cxxabi_init_exception.h \
+  /usr/include/c++/13/bits/erase_if.h \
   /usr/include/c++/13/bits/exception.h \
   /usr/include/c++/13/bits/exception_defines.h \
   /usr/include/c++/13/bits/exception_ptr.h \
@@ -53,8 +54,11 @@ CMakeFiles/Chess.dir/src/board.cpp.o: /home/mryvkin/Desktop/Chess/src/board.cpp 
   /usr/include/c++/13/bits/stl_iterator.h \
   /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/13/bits/stl_iterator_base_types.h \
+  /usr/include/c++/13/bits/stl_multiset.h \
   /usr/include/c++/13/bits/stl_pair.h \
   /usr/include/c++/13/bits/stl_relops.h \
+  /usr/include/c++/13/bits/stl_set.h \
+  /usr/include/c++/13/bits/stl_tree.h \
   /usr/include/c++/13/bits/streambuf.tcc \
   /usr/include/c++/13/bits/streambuf_iterator.h \
   /usr/include/c++/13/bits/stringfwd.h \
@@ -69,6 +73,7 @@ CMakeFiles/Chess.dir/src/board.cpp.o: /home/mryvkin/Desktop/Chess/src/board.cpp 
   /usr/include/c++/13/debug/assertions.h \
   /usr/include/c++/13/debug/debug.h \
   /usr/include/c++/13/exception \
+  /usr/include/c++/13/ext/aligned_buffer.h \
   /usr/include/c++/13/ext/alloc_traits.h \
   /usr/include/c++/13/ext/atomicity.h \
   /usr/include/c++/13/ext/numeric_traits.h \
@@ -81,6 +86,7 @@ CMakeFiles/Chess.dir/src/board.cpp.o: /home/mryvkin/Desktop/Chess/src/board.cpp 
   /usr/include/c++/13/istream \
   /usr/include/c++/13/new \
   /usr/include/c++/13/ostream \
+  /usr/include/c++/13/set \
   /usr/include/c++/13/stdexcept \
   /usr/include/c++/13/streambuf \
   /usr/include/c++/13/string \
@@ -204,6 +210,7 @@ CMakeFiles/Chess.dir/src/main.cpp.o: /home/mryvkin/Desktop/Chess/src/main.cpp \
   /usr/include/c++/13/bits/cpp_type_traits.h \
   /usr/include/c++/13/bits/cxxabi_forced.h \
   /usr/include/c++/13/bits/cxxabi_init_exception.h \
+  /usr/include/c++/13/bits/erase_if.h \
   /usr/include/c++/13/bits/exception.h \
   /usr/include/c++/13/bits/exception_defines.h \
   /usr/include/c++/13/bits/exception_ptr.h \
@@ -237,8 +244,11 @@ CMakeFiles/Chess.dir/src/main.cpp.o: /home/mryvkin/Desktop/Chess/src/main.cpp \
   /usr/include/c++/13/bits/stl_iterator.h \
   /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/13/bits/stl_iterator_base_types.h \
+  /usr/include/c++/13/bits/stl_multiset.h \
   /usr/include/c++/13/bits/stl_pair.h \
   /usr/include/c++/13/bits/stl_relops.h \
+  /usr/include/c++/13/bits/stl_set.h \
+  /usr/include/c++/13/bits/stl_tree.h \
   /usr/include/c++/13/bits/streambuf.tcc \
   /usr/include/c++/13/bits/streambuf_iterator.h \
   /usr/include/c++/13/bits/stringfwd.h \
@@ -253,6 +263,7 @@ CMakeFiles/Chess.dir/src/main.cpp.o: /home/mryvkin/Desktop/Chess/src/main.cpp \
   /usr/include/c++/13/debug/assertions.h \
   /usr/include/c++/13/debug/debug.h \
   /usr/include/c++/13/exception \
+  /usr/include/c++/13/ext/aligned_buffer.h \
   /usr/include/c++/13/ext/alloc_traits.h \
   /usr/include/c++/13/ext/atomicity.h \
   /usr/include/c++/13/ext/numeric_traits.h \
@@ -265,6 +276,7 @@ CMakeFiles/Chess.dir/src/main.cpp.o: /home/mryvkin/Desktop/Chess/src/main.cpp \
   /usr/include/c++/13/istream \
   /usr/include/c++/13/new \
   /usr/include/c++/13/ostream \
+  /usr/include/c++/13/set \
   /usr/include/c++/13/stdexcept \
   /usr/include/c++/13/streambuf \
   /usr/include/c++/13/string \
@@ -450,6 +462,7 @@ CMakeFiles/Chess.dir/src/pieces.cpp.o: /home/mryvkin/Desktop/Chess/src/pieces.cp
   /usr/include/c++/13/bits/cpp_type_traits.h \
   /usr/include/c++/13/bits/cxxabi_forced.h \
   /usr/include/c++/13/bits/cxxabi_init_exception.h \
+  /usr/include/c++/13/bits/erase_if.h \
   /usr/include/c++/13/bits/exception.h \
   /usr/include/c++/13/bits/exception_defines.h \
   /usr/include/c++/13/bits/exception_ptr.h \
@@ -483,8 +496,11 @@ CMakeFiles/Chess.dir/src/pieces.cpp.o: /home/mryvkin/Desktop/Chess/src/pieces.cp
   /usr/include/c++/13/bits/stl_iterator.h \
   /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/13/bits/stl_iterator_base_types.h \
+  /usr/include/c++/13/bits/stl_multiset.h \
   /usr/include/c++/13/bits/stl_pair.h \
   /usr/include/c++/13/bits/stl_relops.h \
+  /usr/include/c++/13/bits/stl_set.h \
+  /usr/include/c++/13/bits/stl_tree.h \
   /usr/include/c++/13/bits/streambuf.tcc \
   /usr/include/c++/13/bits/streambuf_iterator.h \
   /usr/include/c++/13/bits/stringfwd.h \
@@ -499,6 +515,7 @@ CMakeFiles/Chess.dir/src/pieces.cpp.o: /home/mryvkin/Desktop/Chess/src/pieces.cp
   /usr/include/c++/13/debug/assertions.h \
   /usr/include/c++/13/debug/debug.h \
   /usr/include/c++/13/exception \
+  /usr/include/c++/13/ext/aligned_buffer.h \
   /usr/include/c++/13/ext/alloc_traits.h \
   /usr/include/c++/13/ext/atomicity.h \
   /usr/include/c++/13/ext/numeric_traits.h \
@@ -511,6 +528,7 @@ CMakeFiles/Chess.dir/src/pieces.cpp.o: /home/mryvkin/Desktop/Chess/src/pieces.cp
   /usr/include/c++/13/istream \
   /usr/include/c++/13/new \
   /usr/include/c++/13/ostream \
+  /usr/include/c++/13/set \
   /usr/include/c++/13/stdexcept \
   /usr/include/c++/13/streambuf \
   /usr/include/c++/13/string \
@@ -669,8 +687,10 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
   /usr/include/c++/13/bits/stl_iterator_base_types.h \
   /usr/include/c++/13/bits/stl_map.h \
   /usr/include/c++/13/bits/stl_multimap.h \
+  /usr/include/c++/13/bits/stl_multiset.h \
   /usr/include/c++/13/bits/stl_pair.h \
   /usr/include/c++/13/bits/stl_relops.h \
+  /usr/include/c++/13/bits/stl_set.h \
   /usr/include/c++/13/bits/stl_tree.h \
   /usr/include/c++/13/bits/streambuf.tcc \
   /usr/include/c++/13/bits/streambuf_iterator.h \
@@ -701,6 +721,7 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
   /usr/include/c++/13/map \
   /usr/include/c++/13/new \
   /usr/include/c++/13/ostream \
+  /usr/include/c++/13/set \
   /usr/include/c++/13/stdexcept \
   /usr/include/c++/13/streambuf \
   /usr/include/c++/13/string \
@@ -870,9 +891,9 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
   /usr/local/include/SDL3/SDL_video.h
 
 
-/usr/include/c++/13/system_error:
+/usr/include/c++/13/bits/uses_allocator.h:
 
-/usr/include/c++/13/bits/range_access.h:
+/usr/include/c++/13/bits/stl_map.h:
 
 /usr/include/c++/13/bits/cpp_type_traits.h:
 
@@ -886,10 +907,6 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 
 /usr/include/c++/13/ext/aligned_buffer.h:
 
-/usr/include/x86_64-linux-gnu/bits/time.h:
-
-/usr/include/x86_64-linux-gnu/bits/select.h:
-
 /usr/local/include/SDL3/SDL_close_code.h:
 
 /usr/include/x86_64-linux-gnu/bits/locale.h:
@@ -900,17 +917,7 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
-
-/usr/include/c++/13/bits/new_allocator.h:
-
-/usr/include/x86_64-linux-gnu/bits/byteswap.h:
-
-/usr/local/include/SDL3/SDL_loadso.h:
-
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 
 /usr/include/x86_64-linux-gnu/asm/errno.h:
 
@@ -939,6 +946,10 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 /usr/include/c++/13/bits/cxxabi_init_exception.h:
 
 /usr/local/include/SDL3/SDL_timer.h:
+
+/usr/include/c++/13/system_error:
+
+/usr/include/c++/13/bits/range_access.h:
 
 /usr/include/c++/13/ostream:
 
@@ -994,17 +1005,13 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 
 /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
 
-/usr/include/ctype.h:
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
+
+/usr/include/c++/13/bits/utility.h:
+
+/usr/include/c++/13/bits/stl_function.h:
 
 /usr/include/c++/13/bits/invoke.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
-
-/usr/include/c++/13/bits/exception.h:
-
-/usr/include/c++/13/streambuf:
-
-/usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
 /usr/include/c++/13/ios:
 
@@ -1021,6 +1028,8 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 /usr/include/c++/13/bits/concept_check.h:
 
 /usr/local/include/SDL3/SDL_clipboard.h:
+
+/usr/include/c++/13/bits/erase_if.h:
 
 /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
 
@@ -1048,7 +1057,13 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 
 /home/mryvkin/Desktop/Chess/src/board.h:
 
-/usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
+/usr/include/x86_64-linux-gnu/bits/long-double.h:
+
+/usr/include/c++/13/bits/new_allocator.h:
+
+/usr/include/x86_64-linux-gnu/bits/byteswap.h:
+
+/usr/local/include/SDL3/SDL_loadso.h:
 
 /usr/include/errno.h:
 
@@ -1068,15 +1083,19 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h:
 
-/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
-
-/usr/include/strings.h:
-
 /usr/include/c++/13/bits/basic_ios.h:
 
 /usr/include/x86_64-linux-gnu/bits/time64.h:
 
 /usr/include/c++/13/bits/hash_bytes.h:
+
+/usr/include/c++/13/bits/exception.h:
+
+/usr/include/c++/13/streambuf:
+
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+/usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
 /usr/local/include/SDL3/SDL_error.h:
 
@@ -1114,10 +1133,6 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 
 /usr/include/c++/13/bits/ostream.tcc:
 
-/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
-
-/usr/local/include/SDL3/SDL_begin_code.h:
-
 /usr/include/x86_64-linux-gnu/bits/sched.h:
 
 /usr/include/stdio.h:
@@ -1125,10 +1140,6 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 /usr/include/c++/13/bits/stl_iterator_base_types.h:
 
 /usr/include/alloca.h:
-
-/usr/local/include/SDL3/SDL_asyncio.h:
-
-/usr/include/c++/13/bits/basic_string.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
 
@@ -1138,25 +1149,25 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h:
 
+/usr/include/ctype.h:
+
+/usr/include/c++/13/bits/stl_tree.h:
+
 /usr/include/c++/13/bits/allocator.h:
 
 /usr/include/c++/13/bits/locale_classes.tcc:
 
+/usr/include/c++/13/set:
+
 /usr/include/x86_64-linux-gnu/bits/cpu-set.h:
+
+/usr/include/c++/13/bits/stl_set.h:
 
 /usr/include/c++/13/bits/ostream_insert.h:
 
 /usr/include/c++/13/bits/postypes.h:
 
 /usr/include/c++/13/bits/std_abs.h:
-
-/usr/include/c++/13/bits/uses_allocator.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
-
-/usr/include/c++/13/bits/utility.h:
-
-/usr/include/c++/13/bits/stl_function.h:
 
 /usr/include/c++/13/stdexcept:
 
@@ -1178,7 +1189,27 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 
 /usr/local/include/SDL3/SDL_platform.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
+
+/usr/local/include/SDL3/SDL_begin_code.h:
+
 /usr/include/c++/13/bits/stl_relops.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
+
+/usr/include/c++/13/bits/basic_string.tcc:
+
+/usr/local/include/SDL3/SDL_asyncio.h:
+
+/usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
+
+/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
+
+/usr/include/strings.h:
+
+/usr/include/x86_64-linux-gnu/bits/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/time.h:
 
 /usr/include/c++/13/bits/locale_classes.h:
 
@@ -1328,6 +1359,8 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 
 /usr/local/include/SDL3/SDL_guid.h:
 
+/usr/include/c++/13/bits/stl_multiset.h:
+
 /usr/local/include/SDL3/SDL_haptic.h:
 
 /usr/include/c++/13/bits/cxxabi_forced.h:
@@ -1381,9 +1414,3 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/render
 /usr/include/x86_64-linux-gnu/bits/stdint-least.h:
 
 /home/mryvkin/Desktop/Chess/src/pieces.cpp:
-
-/usr/include/c++/13/bits/erase_if.h:
-
-/usr/include/c++/13/bits/stl_map.h:
-
-/usr/include/c++/13/bits/stl_tree.h:

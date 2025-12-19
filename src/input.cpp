@@ -12,13 +12,10 @@ bool checkInput() {
 
 		if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
 			selectPiece();			
-			//std::cout << "PRESSED" << '\n';
 		} else if (event.type == SDL_EVENT_MOUSE_MOTION) {
-			SDL_FPoint pos = {event.button.x, event.button.y};
-			setCurrentMousePos(pos);	
+			setCurrentMousePos(event.button.x, event.button.y);	
 		} else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
 			releasePiece();
-			//std::cout << "REALEASED" << '\n';
 		}
 	}
 

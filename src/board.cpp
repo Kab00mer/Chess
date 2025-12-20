@@ -2,6 +2,8 @@
 #include <iostream>
 
 ChessBoard::ChessBoard(bool white) {
+	whitesTurn = true;
+
 	userIsWhite = white;
 	char user, opponent;
 	if (white) {
@@ -53,13 +55,15 @@ ChessBoard::ChessBoard(bool white) {
 ChessBoard::~ChessBoard() {
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
-			if (squares[i][j]);
+			if (squares[i][j]) {
+				delete squares[i][j];
+			}
 		}
 	}
 }
 
 std::pair<char, char> ChessBoard::getPieceAt(const size_t x, const size_t y) const {
-	return squares[x][y] ? squares[x][y]->returnColorAndType() : std::make_pair('0', '0');
+	return squares[x][y] ? squares[x][y]->getColorAndType() : std::make_pair('0', '0');
 }
 
 std::set<std::pair<int, int>> ChessBoard::getMovesForPiece(const size_t x, const size_t y) const {
@@ -70,10 +74,14 @@ bool ChessBoard::isUserWhite() const { return userIsWhite; }
 
 void ChessBoard::movePiece(int x1, int y1, int x2, int y2) {
 	if (squares[x1][y1]) {
+
 		//if (squares[x1][y1]->canMoveTo(x2, y2)) {
 			//also do a check for check	
 		//	return true;
 		//}
+		squares[x1][y1]->pieceMoved();	
+		ChessPiece* ptr = square[x2][y2];
+		
 		delete squares[x2][y2];
 		squares[x2][y2] = squares[x1][y1];
 		squares[x1][y1] = nullptr;
@@ -98,7 +106,7 @@ void ChessBoard::printBoard() const {
 		std::cout << "| ";
 		for (int j = 0; j < 8; ++j) {
 			if (squares[i][j]) {
-				std::pair<char, char> piece = squares[i][j]->returnColorAndType();
+				std::pair<char, char> piece = squares[i][j]->getColorAndType();
 				std::cout << piece.first << piece.second << " ";
 			} else {
 				std::cout << "00 ";

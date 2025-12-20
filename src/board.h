@@ -17,7 +17,7 @@ class ChessBoard {
 		void movePiece(int, int, int, int);
 		bool checkForCheck() const;
 		bool checkForMate() const;
-
+		bool isItWhitesTurn() const;
 
 		void printBoard() const;
 		void printCollisionBoard() const;
@@ -26,6 +26,7 @@ class ChessBoard {
 		ChessPiece* squares[8][8];
 		char collisionMap[8][8];
 		bool userIsWhite;
+		bool whitesTurn;
 };
 
 #endif

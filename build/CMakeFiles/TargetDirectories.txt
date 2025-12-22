@@ -1,5 +1,0 @@
-/home/mryvkin/Desktop/Chess/build/CMakeFiles/Chess.dir
-/home/mryvkin/Desktop/Chess/build/CMakeFiles/edit_cache.dir
-/home/mryvkin/Desktop/Chess/build/CMakeFiles/rebuild_cache.dir
-/home/mryvkin/Desktop/Chess/build/lib/CMakeFiles/edit_cache.dir
-/home/mryvkin/Desktop/Chess/build/lib/CMakeFiles/rebuild_cache.dir

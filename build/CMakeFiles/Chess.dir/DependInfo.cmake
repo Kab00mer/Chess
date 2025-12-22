@@ -8,9 +8,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/mryvkin/Desktop/Chess/src/board.cpp" "CMakeFiles/Chess.dir/src/board.cpp.o" "gcc" "CMakeFiles/Chess.dir/src/board.cpp.o.d"
+  "/home/mryvkin/Desktop/Chess/src/chess_board.cpp" "CMakeFiles/Chess.dir/src/chess_board.cpp.o" "gcc" "CMakeFiles/Chess.dir/src/chess_board.cpp.o.d"
+  "/home/mryvkin/Desktop/Chess/src/input.cpp" "CMakeFiles/Chess.dir/src/input.cpp.o" "gcc" "CMakeFiles/Chess.dir/src/input.cpp.o.d"
   "/home/mryvkin/Desktop/Chess/src/main.cpp" "CMakeFiles/Chess.dir/src/main.cpp.o" "gcc" "CMakeFiles/Chess.dir/src/main.cpp.o.d"
-  "/home/mryvkin/Desktop/Chess/src/pieces.cpp" "CMakeFiles/Chess.dir/src/pieces.cpp.o" "gcc" "CMakeFiles/Chess.dir/src/pieces.cpp.o.d"
   "/home/mryvkin/Desktop/Chess/src/rendering.cpp" "CMakeFiles/Chess.dir/src/rendering.cpp.o" "gcc" "CMakeFiles/Chess.dir/src/rendering.cpp.o.d"
   )
 

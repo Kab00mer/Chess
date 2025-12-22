@@ -1,11 +1,13 @@
-#include "input.cpp"
+#include "chess_board.h"
+#include "rendering.h"
+#include "input.h"
+
 
 int main(int argc, char* argv[]) {
-	ChessBoard* ptr = new ChessBoard();	
+	ChessBoard* ptr = new ChessBoard(Color::WHITE);	
 	startApp(ptr);	
-
+	
 	ptr->printBoard();
-	ptr->printCollisionBoard();
 	
 	bool running = true;
 	while (running) {

@@ -1,7 +1,7 @@
 CMakeFiles/Chess.dir/src/rendering.cpp.o: \
  /home/mryvkin/Desktop/Chess/src/rendering.cpp /usr/include/stdc-predef.h \
  /home/mryvkin/Desktop/Chess/src/rendering.h \
- /home/mryvkin/Desktop/Chess/src/board.h /usr/include/c++/13/set \
+ /home/mryvkin/Desktop/Chess/src/chess_board.h /usr/include/c++/13/set \
  /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
@@ -43,9 +43,7 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: \
  /usr/include/c++/13/bits/stl_set.h /usr/include/c++/13/initializer_list \
  /usr/include/c++/13/bits/stl_multiset.h \
  /usr/include/c++/13/bits/range_access.h \
- /usr/include/c++/13/bits/erase_if.h \
- /home/mryvkin/Desktop/Chess/src/pieces.h /usr/include/c++/13/utility \
- /usr/include/c++/13/bits/stl_relops.h /usr/include/c++/13/string \
+ /usr/include/c++/13/bits/erase_if.h /usr/include/c++/13/string \
  /usr/include/c++/13/bits/stringfwd.h \
  /usr/include/c++/13/bits/char_traits.h \
  /usr/include/c++/13/bits/postypes.h /usr/include/c++/13/cwchar \
@@ -161,10 +159,7 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: \
  /usr/local/include/SDL3/SDL_system.h /usr/local/include/SDL3/SDL_time.h \
  /usr/local/include/SDL3/SDL_timer.h /usr/local/include/SDL3/SDL_tray.h \
  /usr/local/include/SDL3/SDL_version.h \
- /usr/local/include/SDL3/SDL_oldnames.h /usr/include/c++/13/map \
- /usr/include/c++/13/bits/stl_map.h /usr/include/c++/13/tuple \
- /usr/include/c++/13/bits/uses_allocator.h \
- /usr/include/c++/13/bits/stl_multimap.h /usr/include/c++/13/iostream \
+ /usr/local/include/SDL3/SDL_oldnames.h /usr/include/c++/13/iostream \
  /usr/include/c++/13/ostream /usr/include/c++/13/ios \
  /usr/include/c++/13/exception /usr/include/c++/13/bits/exception_ptr.h \
  /usr/include/c++/13/bits/cxxabi_init_exception.h \
@@ -200,4 +195,7 @@ CMakeFiles/Chess.dir/src/rendering.cpp.o: \
  /usr/include/c++/13/bits/locale_facets.tcc \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
- /usr/include/c++/13/bits/istream.tcc
+ /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/map \
+ /usr/include/c++/13/bits/stl_map.h /usr/include/c++/13/tuple \
+ /usr/include/c++/13/bits/uses_allocator.h \
+ /usr/include/c++/13/bits/stl_multimap.h

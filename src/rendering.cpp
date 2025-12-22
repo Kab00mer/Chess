@@ -1,25 +1,25 @@
 #include "rendering.h"
 #include "SDL3/SDL.h"
-#include <map>
 #include <iostream>
-#include <set>
+#include <map>
 
 const int WINDOW_WIDTH = 850;
 const int WINDOW_HEIGHT = 850;
 const int PADDING = 25;
-const size_t NUM_OF_SQUARES = 64;
+const size_t RANK = 8;
 const size_t SQUARE_SIZE = 100;
 const size_t NUM_OF_PIECES = 12;
 
 static SDL_Window* window;
 static SDL_Renderer* renderer;
-static SDL_FRect rects[NUM_OF_SQUARES];
+static SDL_FRect rects[RANK][RANK];
 static std::map<std::string, SDL_Texture*> textures;
 
 static ChessBoard* board;
-static std::pair<float, float> mousePos = {0.0f, 0.0f};
-static std::pair<int, int> selectedSquare = {8, 8};
-static std::set<std::pair<int, int>> possibleMoves;
+static float mouseX = 0.0f;
+static float mouseY = 0.0f;
+static Coord selectedSquare = {RANK, RANK};
+static std::set<Coord> possibleMoves;
 static bool holding = false;
 
 void startApp(ChessBoard* boardPtr) {
@@ -27,11 +27,13 @@ void startApp(ChessBoard* boardPtr) {
 	SDL_CreateWindowAndRenderer("Chess", WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
 	
 	//initialize size of squares for UI
-	for (size_t i = 0; i < NUM_OF_SQUARES; ++i) {
-		rects[i].x = (i % 8) * SQUARE_SIZE + PADDING;
-		rects[i].y = static_cast<size_t>(i / 8) * SQUARE_SIZE + PADDING;
-		rects[i].w = SQUARE_SIZE;
-		rects[i].h = SQUARE_SIZE;
+	for (int i = 0; i < RANK; ++i) {
+		for (int j = 0; j < RANK; ++j) {
+			rects[i][j].x = j * SQUARE_SIZE + PADDING;
+			rects[i][j].y = i * SQUARE_SIZE + PADDING;
+			rects[i][j].w = SQUARE_SIZE;
+			rects[i][j].h = SQUARE_SIZE;
+		}
 	}
 
 	//loading image paths 
@@ -86,40 +88,60 @@ void continueApp() {
 	SDL_RenderClear(renderer);
 
 	//drawing checkered squares
-	size_t j = board->isUserWhite() ? 1 : 0; //switch this depending on the users color
-	for (size_t i = 0; i < NUM_OF_SQUARES; ++i) {
+	Color current = board->getUsersColor();
+	int j = (current == Color::WHITE) ? 1 : 0;
+	for (size_t i = 0; i < RANK * RANK; ++i) {
 		(i + j) % 2 == 0 ? SDL_SetRenderDrawColor(renderer, 20, 20, 20, SDL_ALPHA_OPAQUE) 
 			: SDL_SetRenderDrawColor(renderer, 220, 220, 220, SDL_ALPHA_OPAQUE);
-		SDL_RenderFillRect(renderer, &rects[i]);		
+		SDL_RenderFillRect(renderer, &rects[i / 8][i % 8]);		
 		if (i % 8 == 7) { ++j; }
 	}
 
 	//drawing tiles of selected piece
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(renderer, &rects[selectedSquare.first * 8 + selectedSquare.second]);
+	SDL_RenderFillRect(renderer, &rects[selectedSquare.x][selectedSquare.y]);
 
 	//drawing tiles of moves piece can take
-	for (std::pair<int, int> square : possibleMoves) {
-		SDL_RenderFillRect(renderer, &rects[square.first * 8 + square.second]);
+	for (Coord square : possibleMoves) {
+		SDL_RenderFillRect(renderer, &rects[square.x][square.y]);
 	}
 
+	//drawing tile if king is in check
+	/*
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+	if (board->inCheck()) {
+		std::pair<int, int> king = board-getCheckedKing();
+		SDL_RenderFillRect(renderer, &rects[king.first * 8 + king.second]);
+	}
+	*/
+
 	//go through all of the board's squares and draw pieces
-	for (size_t i = 0; i < 8; ++i) {
-		for (size_t j = 0; j < 8; ++j) {
-			if (i != selectedSquare.first || j != selectedSquare.second) {
-				std::pair<char, char> piece = board->getPieceAt(i, j);
-				renderPieceAtCoord(piece.first, piece.second, i, j);
-			} else if (!holding) {
-				std::pair<char, char> piece = board->getPieceAt(i, j);
-				renderPieceAtCoord(piece.first, piece.second, i, j);
+	for (int i = 0; i < 8; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			if (i != selectedSquare.x || j != selectedSquare.y || !holding) {
+				Coord pos = {i, j};
+				Piece piece = board->getPieceAt(pos);
+				if (piece.color != Color::NONE) {
+					std::string key = convertPieceToStr(piece);
+					SDL_RenderTexture(renderer, textures[key], NULL, &rects[i][j]);
+				}
 			}
 		}
 	}
 
-	//Render stuff for the selected piece
+	//Render the piece at the mouse if they're holding it
 	if (holding) {
-		std::pair<char, char> selectedPiece = board->getPieceAt(selectedSquare.first, selectedSquare.second);
-		renderPieceAtMouse(selectedPiece.first, selectedPiece.second);
+		Piece selectedPiece = board->getPieceAt(selectedSquare);
+		if (selectedPiece.color != Color::NONE) {
+			SDL_FRect r;
+			r.x = mouseX - SQUARE_SIZE / 2;
+			r.y = mouseY - SQUARE_SIZE / 2;
+			r.w = SQUARE_SIZE;
+			r.h = SQUARE_SIZE;
+		
+			std::string key = convertPieceToStr(selectedPiece);
+			SDL_RenderTexture(renderer, textures[key], NULL, &r);
+		}
 	}
 
 	SDL_RenderPresent(renderer);
@@ -128,48 +150,66 @@ void continueApp() {
 void stopApp() {
 	SDL_Quit();
 	//run through all the textures and destruct them	
-}
-
-void renderPieceAtCoord(char color, char type, int x, int y) {
-	if (color != '0') {
-		std::string str = "";
-		str.push_back(color);
-		str.push_back(type);
-
-		SDL_RenderTexture(renderer, textures[str], NULL, &rects[x * 8 + y]);
+	for (auto texture : textures) {
+			
 	}
 }
 
-void renderPieceAtMouse(char color, char type) {
-	if (color != '0') {
-		std::string str = "";
-		str.push_back(color);
-		str.push_back(type);
+std::string convertPieceToStr(const Piece piece) {
+	//We're using this str to get our image path
+	std::string str = "";
 
-		SDL_FRect r;
-		r.x = mousePos.first - SQUARE_SIZE / 2;
-		r.y = mousePos.second - SQUARE_SIZE / 2;
-		r.w = SQUARE_SIZE;
-		r.h = SQUARE_SIZE;
-		
-		SDL_RenderTexture(renderer, textures[str], NULL, &r);
+	switch (piece.color) {
+		case Color::WHITE :
+			str.push_back('w');
+			break;
+		case Color::BLACK :
+			str.push_back('b');
+			break;
+		default :
+			str.push_back('0');
 	}
+	
+	switch (piece.type) {
+		case PieceType::PAWN :
+			str.push_back('p');
+			break;
+		case PieceType::BISHOP :
+			str.push_back('b');
+			break;
+		case PieceType::KNIGHT :
+			str.push_back('n');
+			break;
+		case PieceType::ROOK :
+			str.push_back('r');
+			break;
+		case PieceType::QUEEN :
+			str.push_back('q');
+			break;
+		case PieceType::KING :
+			str.push_back('k');
+			break;
+		default :
+			str.push_back('0');
+	}
+
+	return str;
 }
 
 void setCurrentMousePos(const float x, const float y) {
-	mousePos = std::make_pair(x, y);
+	mouseX = x;
+	mouseY = y;
 }
 
-std::pair<int, int> convertMousePosToCoords() {
-	//converts SDL's point to a coordinate
-	SDL_FPoint point = {mousePos.first, mousePos.second};
+Coord convertMousePosToCoord() {
+	SDL_FPoint point = {mouseX, mouseY};
 	bool found = false;
 	int i = 0;
 	int j = 0;
 	while (!found && i < 8) {
 		j = 0;
 		while (!found && j < 8) {
-			if (SDL_PointInRectFloat(&point, &rects[i * 8 + j])) {
+			if (SDL_PointInRectFloat(&point, &rects[i][j])) {
 				found = true;
 			} else {
 				++j;
@@ -181,14 +221,13 @@ std::pair<int, int> convertMousePosToCoords() {
 	return {i, j};
 }
 
-void selectPiece() {
-	std::pair<int, int> coord = convertMousePosToCoords();
+void holdPiece() {
+	Coord coord = convertMousePosToCoord();
 
-	if (coord.first != 8) {
-		std::pair<char, char> piece = board->getPieceAt(coord.first, coord.second);
-
-		if (piece.first != '0') {
-			possibleMoves = board->getMovesForPiece(coord.first, coord.second);
+	if (coord.x != 8) {
+		Piece piece = board->getPieceAt(coord);
+		if (piece.color != Color::NONE) {
+			possibleMoves = board->getMovesForPieceAt(coord);
 			holding = true;
 			selectedSquare = coord;
 		}
@@ -196,16 +235,17 @@ void selectPiece() {
 }
 
 void releasePiece() {
-	std::pair<int, int> coord = convertMousePosToCoords();
+	Coord coord = convertMousePosToCoord();
 
-	if (coord.first != 8 && selectedSquare.first != 8 
-			&& selectedSquare != coord && possibleMoves.count(coord) != 0) {
-		board->movePiece(selectedSquare.first, selectedSquare.second, coord.first, coord.second);
+	/*
+	if (coord.x != 8 && selectedSquare.x != 8 && selectedSquare != coord && possibleMoves.count(coord) != 0) {
+		board->movePiece(selectedSquare, coord);
 
 		possibleMoves.clear();
-		selectedSquare.first = 8;
-		selectedSquare.second = 8;
+		selectedSquare.x = 8;
+		selectedSquare.y = 8;
 	}
+	*/
 
 	holding = false;
 }

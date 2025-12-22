@@ -1,6 +1,6 @@
-#include "SDL3/SDL.h"
+#include "input.h"
 #include "rendering.h"
-#include <iostream>
+#include "SDL3/SDL.h"
 
 bool checkInput() {
 	bool quit = false;
@@ -9,11 +9,12 @@ bool checkInput() {
 		if (event.type == SDL_EVENT_QUIT) {
 			quit = true;	
 		}
-
 		if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-			selectPiece();			
+			holdPiece();			
+
 		} else if (event.type == SDL_EVENT_MOUSE_MOTION) {
 			setCurrentMousePos(event.button.x, event.button.y);	
+
 		} else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
 			releasePiece();
 		}

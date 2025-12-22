@@ -69,24 +69,38 @@ include CMakeFiles/Chess.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/Chess.dir/flags.make
 
-CMakeFiles/Chess.dir/src/board.cpp.o: CMakeFiles/Chess.dir/flags.make
-CMakeFiles/Chess.dir/src/board.cpp.o: /home/mryvkin/Desktop/Chess/src/board.cpp
-CMakeFiles/Chess.dir/src/board.cpp.o: CMakeFiles/Chess.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mryvkin/Desktop/Chess/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Chess.dir/src/board.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess.dir/src/board.cpp.o -MF CMakeFiles/Chess.dir/src/board.cpp.o.d -o CMakeFiles/Chess.dir/src/board.cpp.o -c /home/mryvkin/Desktop/Chess/src/board.cpp
+CMakeFiles/Chess.dir/src/chess_board.cpp.o: CMakeFiles/Chess.dir/flags.make
+CMakeFiles/Chess.dir/src/chess_board.cpp.o: /home/mryvkin/Desktop/Chess/src/chess_board.cpp
+CMakeFiles/Chess.dir/src/chess_board.cpp.o: CMakeFiles/Chess.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mryvkin/Desktop/Chess/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Chess.dir/src/chess_board.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess.dir/src/chess_board.cpp.o -MF CMakeFiles/Chess.dir/src/chess_board.cpp.o.d -o CMakeFiles/Chess.dir/src/chess_board.cpp.o -c /home/mryvkin/Desktop/Chess/src/chess_board.cpp
 
-CMakeFiles/Chess.dir/src/board.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Chess.dir/src/board.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mryvkin/Desktop/Chess/src/board.cpp > CMakeFiles/Chess.dir/src/board.cpp.i
+CMakeFiles/Chess.dir/src/chess_board.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Chess.dir/src/chess_board.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mryvkin/Desktop/Chess/src/chess_board.cpp > CMakeFiles/Chess.dir/src/chess_board.cpp.i
 
-CMakeFiles/Chess.dir/src/board.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Chess.dir/src/board.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mryvkin/Desktop/Chess/src/board.cpp -o CMakeFiles/Chess.dir/src/board.cpp.s
+CMakeFiles/Chess.dir/src/chess_board.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Chess.dir/src/chess_board.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mryvkin/Desktop/Chess/src/chess_board.cpp -o CMakeFiles/Chess.dir/src/chess_board.cpp.s
+
+CMakeFiles/Chess.dir/src/input.cpp.o: CMakeFiles/Chess.dir/flags.make
+CMakeFiles/Chess.dir/src/input.cpp.o: /home/mryvkin/Desktop/Chess/src/input.cpp
+CMakeFiles/Chess.dir/src/input.cpp.o: CMakeFiles/Chess.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mryvkin/Desktop/Chess/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Chess.dir/src/input.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess.dir/src/input.cpp.o -MF CMakeFiles/Chess.dir/src/input.cpp.o.d -o CMakeFiles/Chess.dir/src/input.cpp.o -c /home/mryvkin/Desktop/Chess/src/input.cpp
+
+CMakeFiles/Chess.dir/src/input.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Chess.dir/src/input.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mryvkin/Desktop/Chess/src/input.cpp > CMakeFiles/Chess.dir/src/input.cpp.i
+
+CMakeFiles/Chess.dir/src/input.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Chess.dir/src/input.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mryvkin/Desktop/Chess/src/input.cpp -o CMakeFiles/Chess.dir/src/input.cpp.s
 
 CMakeFiles/Chess.dir/src/main.cpp.o: CMakeFiles/Chess.dir/flags.make
 CMakeFiles/Chess.dir/src/main.cpp.o: /home/mryvkin/Desktop/Chess/src/main.cpp
 CMakeFiles/Chess.dir/src/main.cpp.o: CMakeFiles/Chess.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mryvkin/Desktop/Chess/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Chess.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mryvkin/Desktop/Chess/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Chess.dir/src/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess.dir/src/main.cpp.o -MF CMakeFiles/Chess.dir/src/main.cpp.o.d -o CMakeFiles/Chess.dir/src/main.cpp.o -c /home/mryvkin/Desktop/Chess/src/main.cpp
 
 CMakeFiles/Chess.dir/src/main.cpp.i: cmake_force
@@ -96,20 +110,6 @@ CMakeFiles/Chess.dir/src/main.cpp.i: cmake_force
 CMakeFiles/Chess.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Chess.dir/src/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mryvkin/Desktop/Chess/src/main.cpp -o CMakeFiles/Chess.dir/src/main.cpp.s
-
-CMakeFiles/Chess.dir/src/pieces.cpp.o: CMakeFiles/Chess.dir/flags.make
-CMakeFiles/Chess.dir/src/pieces.cpp.o: /home/mryvkin/Desktop/Chess/src/pieces.cpp
-CMakeFiles/Chess.dir/src/pieces.cpp.o: CMakeFiles/Chess.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mryvkin/Desktop/Chess/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Chess.dir/src/pieces.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess.dir/src/pieces.cpp.o -MF CMakeFiles/Chess.dir/src/pieces.cpp.o.d -o CMakeFiles/Chess.dir/src/pieces.cpp.o -c /home/mryvkin/Desktop/Chess/src/pieces.cpp
-
-CMakeFiles/Chess.dir/src/pieces.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Chess.dir/src/pieces.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mryvkin/Desktop/Chess/src/pieces.cpp > CMakeFiles/Chess.dir/src/pieces.cpp.i
-
-CMakeFiles/Chess.dir/src/pieces.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Chess.dir/src/pieces.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mryvkin/Desktop/Chess/src/pieces.cpp -o CMakeFiles/Chess.dir/src/pieces.cpp.s
 
 CMakeFiles/Chess.dir/src/rendering.cpp.o: CMakeFiles/Chess.dir/flags.make
 CMakeFiles/Chess.dir/src/rendering.cpp.o: /home/mryvkin/Desktop/Chess/src/rendering.cpp
@@ -127,17 +127,17 @@ CMakeFiles/Chess.dir/src/rendering.cpp.s: cmake_force
 
 # Object files for target Chess
 Chess_OBJECTS = \
-"CMakeFiles/Chess.dir/src/board.cpp.o" \
+"CMakeFiles/Chess.dir/src/chess_board.cpp.o" \
+"CMakeFiles/Chess.dir/src/input.cpp.o" \
 "CMakeFiles/Chess.dir/src/main.cpp.o" \
-"CMakeFiles/Chess.dir/src/pieces.cpp.o" \
 "CMakeFiles/Chess.dir/src/rendering.cpp.o"
 
 # External object files for target Chess
 Chess_EXTERNAL_OBJECTS =
 
-Chess: CMakeFiles/Chess.dir/src/board.cpp.o
+Chess: CMakeFiles/Chess.dir/src/chess_board.cpp.o
+Chess: CMakeFiles/Chess.dir/src/input.cpp.o
 Chess: CMakeFiles/Chess.dir/src/main.cpp.o
-Chess: CMakeFiles/Chess.dir/src/pieces.cpp.o
 Chess: CMakeFiles/Chess.dir/src/rendering.cpp.o
 Chess: CMakeFiles/Chess.dir/build.make
 Chess: CMakeFiles/Chess.dir/link.txt

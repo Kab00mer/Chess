@@ -2,6 +2,7 @@
 #include <iostream>
 
 ChessBoard::ChessBoard(Color color = Color::WHITE) {
+	whoseTurnIsIt = Color::WHITE;
 	usersColor = color;
 	Color opponent = (usersColor == Color::WHITE) ? Color::BLACK : Color::WHITE;
 
@@ -30,6 +31,8 @@ ChessBoard::ChessBoard(Color color = Color::WHITE) {
 
 	grid[0][4] = new Piece(opponent, PieceType::KING);
 	grid[7][4] = new Piece(usersColor, PieceType::KING);
+
+	updateMoves();
 }
 
 ChessBoard::~ChessBoard() {
@@ -47,28 +50,74 @@ Piece ChessBoard::getPieceAt(const Coord pos) const {
 }
 
 std::set<Coord> ChessBoard::getMovesForPieceAt(const Coord pos) const {
-	return {};
+	std::set<Coord> foundMoves;
+	
+	for (std::pair<Coord, Coord> move : availableMoves) {
+		if (move.first == pos) {
+			foundMoves.insert(move.second);
+		}
+	}
+
+	return foundMoves;
 }
 
-Color ChessBoard::getUsersColor() const {
-	return usersColor;
+Color ChessBoard::getUsersColor() const { return usersColor; }
+
+Color ChessBoard::getWhoseTurnIsIt() const { return whoseTurnIsIt; }
+
+void ChessBoard::updateMoves() {
+	availableMoves.clear();
+
+	//Then sees if any move would cause their king to be in check with checkForCheck()
+	for (int i = 0; i < 8; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			if (grid[i][j] && grid[i][j]->color == whoseTurnIsIt) {
+				std::set<Coord> results;
+				Coord current = {i, j};
+
+				switch (grid[i][j]->type) {
+					case PieceType::PAWN :
+						results = possiblePawnMoves(current);
+						break;
+					case PieceType::BISHOP :
+						results = possibleBishopMoves(current);
+						break;
+					case PieceType::KNIGHT :
+						results = possibleKnightMoves(current);
+						break;
+					case PieceType::ROOK :
+						results = possibleRookMoves(current);
+						break;
+					case PieceType::QUEEN :
+						results = possibleQueenMoves(current);
+						break;
+					case PieceType::KING :
+						results = possibleKingMoves(current);
+						break;
+				}
+
+				//then process results
+				for (Coord c : results) {
+					//std::cout << c.x << ", " << c.y << '\n';
+					availableMoves.insert(std::make_pair(current, c));
+				}
+			}
+		}
+	}
 }
 
 void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 	if (grid[pos1.x][pos1.y]) {
-		/*
-		grid[x1][y1]->pieceMoved();	
-		ChessPiece* ptr = grid[x2][y2];
+		grid[pos1.x][pos1.y]->hasMoved = true;
 		
-		delete grid[x2][y2];
-		grid[x2][y2] = grid[x1][y1];
-		grid[x1][y1] = nullptr;
+		if (grid[pos2.x][pos2.y]) {
+			delete grid[pos2.x][pos2.y];
+		}
+		grid[pos2.x][pos2.y] = grid[pos1.x][pos1.y];
+		grid[pos1.x][pos1.y] = nullptr;
 
-		collisionMap[x2][y2] = collisionMap[x1][y1];
-		collisionMap[x1][y1] = '0';
-
-		whitesTurn = !whitesTurn;
-		*/
+		whoseTurnIsIt = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
+		updateMoves();
 	}
 }
 
@@ -82,34 +131,159 @@ bool ChessBoard::checkForMate() const {
 	return false;
 }
 
-std::set<Coord> possiblePawnMoves(const Coord) {
+std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos) {
 	std::set<Coord> moves;
+	
+	int offset;
+	switch (grid[pos.x][pos.y]->color) {
+		case Color::WHITE :
+			offset = -1;
+			break;
+		case Color::BLACK :
+			offset = 1;
+			break;
+	}
+
+	if (!grid[pos.x + offset][pos.y]) {
+		moves.insert( {pos.x + offset, pos.y} );
+		if (!grid[pos.x][pos.y]->hasMoved && !grid[pos.x + offset * 2][pos.y]) {
+			moves.insert( {pos.x + offset * 2, pos.y} );
+		}
+	}
+
+	if (pos.y + 1 < 8 && (!grid[pos.x + offset][pos.y + 1] 
+			|| grid[pos.x + offset][pos.y + 1]->color != grid[pos.x][pos.y]->color)) {
+		moves.insert( {pos.x + offset, pos.y + 1} );
+	}
+	if (pos.y - 1 >= 0 && (!grid[pos.x + offset][pos.y - 1]
+			|| grid[pos.x + offset][pos.y - 1]->color != grid[pos.x][pos.y]->color)) {
+		moves.insert( {pos.x + offset, pos.y - 1} );
+	}
+
 	return moves;
 }
 
-std::set<Coord> possibleBishopMoves(const Coord) {
+std::set<Coord> ChessBoard::possibleBishopMoves(const Coord pos) {
 	std::set<Coord> moves;
+	
+	for (int i = -1; i <= 1; ++i) {
+		for (int j = -1; j <= 1; ++j) {
+			if (i != 0 && j != 0) {
+				for (Coord c : raycastLineAt(pos, i, j)) {
+					moves.insert(c);
+				}
+			}
+		}
+	}
+
 	return moves;
 }
 
-std::set<Coord> possibleKnightMoves(const Coord) {
+std::set<Coord> ChessBoard::possibleKnightMoves(const Coord pos) {
 	std::set<Coord> moves;
+
+	for (int i = -1; i <= 1; ++i) {
+		for (int j = -1; j <= 1; ++j) {
+			if (i != 0 && j != 0) {
+				int currentX = pos.x + i;
+				int currentY = pos.y + j;
+				
+				if (currentX >= 0 && currentX < 8 && currentY >= 0 && currentY < 8) {
+					if (currentX + i >= 0 && currentX + i < 8 
+							&& (!grid[currentX + i][currentY] 
+							|| grid[currentX + i][currentY]->color != grid[pos.x][pos.y]->color)) {
+						moves.insert( {currentX + i, currentY} );
+					}
+					if (currentY + j >= 0 && currentY + j < 8 
+							&& (!grid[currentX][currentY + j]
+							|| grid[currentX][currentY + j]->color != grid[pos.x][pos.y]->color)) {
+						moves.insert( {currentX, currentY + j} );
+					}
+				}
+			}
+		}
+	}
+
 	return moves;
 }
 
-std::set<Coord> possibleRookMoves(const Coord) {
+std::set<Coord> ChessBoard::possibleRookMoves(const Coord pos) {
 	std::set<Coord> moves;
+
+	for (int i = -1; i <= 1; ++i) {
+		for (int j = -1; j <= 1; ++j) {
+			if ((i == 0) != (j == 0)) {
+				for (Coord c : raycastLineAt(pos, i, j)) {
+					moves.insert(c);
+				}
+			}
+		}
+	}
 	return moves;
 }
 
-std::set<Coord> possibleQueenMoves(const Coord) {
+std::set<Coord> ChessBoard::possibleQueenMoves(const Coord pos) {
 	std::set<Coord> moves;
+
+	for (int i = -1; i <= 1; ++i) {
+		for (int j = -1; j <= 1; ++j) {
+			if (i != 0 || j != 0) {
+				for (Coord c : raycastLineAt(pos, i, j)) {
+					moves.insert(c);
+				}
+			}
+		}
+	}
+
 	return moves;
 }
 
-std::set<Coord> possibleKingMoves(const Coord) {
+std::set<Coord> ChessBoard::possibleKingMoves(const Coord pos) {
 	std::set<Coord> moves;
+
+	for (int i = -1; i <= 1; ++i) {
+		for (int j = -1; j <= 1; ++j) {
+			if (i != 0 || j != 0) {
+				int currentX = pos.x + i;
+				int currentY = pos.y + j;
+				if (currentX >= 0 && currentX < 8 && currentY >= 0 && currentY < 8 
+						&& (!grid[currentX][currentY] 
+							|| grid[currentX][currentY]->color != grid[pos.x][pos.y]->color)) {
+
+					moves.insert( {currentX, currentY} );	
+				}
+			}
+		}
+	}
+
 	return moves;
+}
+
+std::set<Coord> ChessBoard::raycastLineAt(const Coord pos, const int xDirect, const int yDirect) {
+	std::set<Coord> result;
+	int currentX = pos.x + xDirect;
+	int currentY = pos.y + yDirect;
+
+	bool collision = false;
+	while (!collision) {
+		if (currentX >= 0 && currentX < 8 && currentY >= 0 && currentY < 8) {
+			if (!grid[currentX][currentY]) {
+				result.insert( {currentX, currentY} );
+				currentX += xDirect;
+				currentY += yDirect;
+			} else if (grid[currentX][currentY]->color == grid[pos.x][pos.y]->color) {
+				collision = true;
+			} else {
+				result.insert( {currentX, currentY} );
+				collision = true;
+			}
+
+		} else {
+			collision = true;
+		}
+	}
+
+	return result;
 }
 
 void ChessBoard::printBoard() const {
@@ -160,4 +334,5 @@ void ChessBoard::printBoard() const {
 		}
 		std::cout << "|\n";
 	}
+	std::cout << '\n';
 }

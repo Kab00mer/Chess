@@ -226,7 +226,7 @@ void holdPiece() {
 
 	if (coord.x != 8) {
 		Piece piece = board->getPieceAt(coord);
-		if (piece.color != Color::NONE) {
+		if (piece.color == board->getWhoseTurnIsIt()) {
 			possibleMoves = board->getMovesForPieceAt(coord);
 			holding = true;
 			selectedSquare = coord;
@@ -236,16 +236,15 @@ void holdPiece() {
 
 void releasePiece() {
 	Coord coord = convertMousePosToCoord();
-
-	/*
-	if (coord.x != 8 && selectedSquare.x != 8 && selectedSquare != coord && possibleMoves.count(coord) != 0) {
+	if (coord.x != 8 && selectedSquare.x != 8 && selectedSquare != coord 
+			&& possibleMoves.find(coord) != possibleMoves.end()) {
 		board->movePiece(selectedSquare, coord);
+		board->printBoard();
 
 		possibleMoves.clear();
 		selectedSquare.x = 8;
 		selectedSquare.y = 8;
 	}
-	*/
 
 	holding = false;
 }

@@ -4,6 +4,11 @@
 ChessBoard::ChessBoard(Color color = Color::WHITE) {
 	whoseTurnIsIt = Color::WHITE;
 	usersColor = color;
+	enPassant = {8, 8};
+	kingsideCastle = {8, 8};
+	queensideCastle = {8, 8};
+	inCheck = false;
+
 	Color opponent = (usersColor == Color::WHITE) ? Color::BLACK : Color::WHITE;
 
 	for (size_t i = 0; i < 8; ++i) {
@@ -67,8 +72,8 @@ Color ChessBoard::getWhoseTurnIsIt() const { return whoseTurnIsIt; }
 
 void ChessBoard::updateMoves() {
 	availableMoves.clear();
+	inCheck = checkForCheck();
 
-	//Then sees if any move would cause their king to be in check with checkForCheck()
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
 			if (grid[i][j] && grid[i][j]->color == whoseTurnIsIt) {
@@ -96,9 +101,8 @@ void ChessBoard::updateMoves() {
 						break;
 				}
 
-				//then process results
 				for (Coord c : results) {
-					//std::cout << c.x << ", " << c.y << '\n';
+					//run through checkForCheck() after moving it
 					availableMoves.insert(std::make_pair(current, c));
 				}
 			}
@@ -113,11 +117,41 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 		if (grid[pos2.x][pos2.y]) {
 			delete grid[pos2.x][pos2.y];
 		}
+
 		grid[pos2.x][pos2.y] = grid[pos1.x][pos1.y];
 		grid[pos1.x][pos1.y] = nullptr;
 
+		if (grid[pos2.x][pos2.y]->type == PieceType::PAWN) {
+			if (enPassant.x != 8 && pos2 == enPassant) {
+				delete grid[pos1.x][pos2.y];
+				grid[pos1.x][pos2.y] = nullptr;
+			} else if (pos2.x - pos1.x == 2) {
+				enPassant = {pos1.x + 1, pos1.y};
+			} else if (pos2.x - pos1.x == -2) {
+				enPassant = {pos1.x - 1, pos1.y};
+			} else {
+				enPassant = {8, 8};
+			}
+
+		} else {
+			enPassant = {8, 8};
+		}
+
+		if (grid[pos2.x][pos2.y]->type == PieceType::KING) {
+			if (pos2 == kingsideCastle) {
+				grid[pos2.x][pos2.y - 1] = grid[pos2.x][7];
+				grid[pos2.x][7] = nullptr;
+			} else if (pos2 == queensideCastle) {
+				grid[pos2.x][pos2.y + 1] = grid[pos2.x][0];
+				grid[pos2.x][0] = nullptr;
+			}
+		}
+
 		whoseTurnIsIt = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
 		updateMoves();
+
+	} else {
+		std::cout << "ERROR: Tried to move a nonexistant piece" << '\n';
 	}
 }
 
@@ -127,8 +161,7 @@ bool ChessBoard::checkForCheck() const {
 }
 
 bool ChessBoard::checkForMate() const {
-	//will do later
-	return false;
+	return availableMoves.size();
 }
 
 std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos) {
@@ -144,6 +177,7 @@ std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos) {
 			break;
 	}
 
+	//pawn forwards
 	if (!grid[pos.x + offset][pos.y]) {
 		moves.insert( {pos.x + offset, pos.y} );
 		if (!grid[pos.x][pos.y]->hasMoved && !grid[pos.x + offset * 2][pos.y]) {
@@ -151,13 +185,16 @@ std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos) {
 		}
 	}
 
-	if (pos.y + 1 < 8 && (!grid[pos.x + offset][pos.y + 1] 
-			|| grid[pos.x + offset][pos.y + 1]->color != grid[pos.x][pos.y]->color)) {
-		moves.insert( {pos.x + offset, pos.y + 1} );
-	}
-	if (pos.y - 1 >= 0 && (!grid[pos.x + offset][pos.y - 1]
-			|| grid[pos.x + offset][pos.y - 1]->color != grid[pos.x][pos.y]->color)) {
-		moves.insert( {pos.x + offset, pos.y - 1} );
+	//pawn diagonals
+	for (int i = -1; i <= 1; i += 2) {
+		if (pos.y + i >= 0 && pos.y + i < 8) {
+			if (grid[pos.x + offset][pos.y + i] 
+					&& grid[pos.x + offset][pos.y + i]->color != grid[pos.x][pos.y]->color) {
+				moves.insert( {pos.x + offset, pos.y + i} );
+			} else if (pos.x + offset == enPassant.x && pos.y + i == enPassant.y) {
+				moves.insert( {pos.x + offset, pos.y + i} );
+			}
+		}
 	}
 
 	return moves;
@@ -168,6 +205,7 @@ std::set<Coord> ChessBoard::possibleBishopMoves(const Coord pos) {
 	
 	for (int i = -1; i <= 1; ++i) {
 		for (int j = -1; j <= 1; ++j) {
+			//go in all diagonal directions
 			if (i != 0 && j != 0) {
 				for (Coord c : raycastLineAt(pos, i, j)) {
 					moves.insert(c);
@@ -212,6 +250,7 @@ std::set<Coord> ChessBoard::possibleRookMoves(const Coord pos) {
 
 	for (int i = -1; i <= 1; ++i) {
 		for (int j = -1; j <= 1; ++j) {
+			//go in all cardinal directions
 			if ((i == 0) != (j == 0)) {
 				for (Coord c : raycastLineAt(pos, i, j)) {
 					moves.insert(c);
@@ -227,6 +266,7 @@ std::set<Coord> ChessBoard::possibleQueenMoves(const Coord pos) {
 
 	for (int i = -1; i <= 1; ++i) {
 		for (int j = -1; j <= 1; ++j) {
+			//go in all 8 directions
 			if (i != 0 || j != 0) {
 				for (Coord c : raycastLineAt(pos, i, j)) {
 					moves.insert(c);
@@ -243,17 +283,59 @@ std::set<Coord> ChessBoard::possibleKingMoves(const Coord pos) {
 
 	for (int i = -1; i <= 1; ++i) {
 		for (int j = -1; j <= 1; ++j) {
+			//go in all 8 directions
 			if (i != 0 || j != 0) {
 				int currentX = pos.x + i;
 				int currentY = pos.y + j;
 				if (currentX >= 0 && currentX < 8 && currentY >= 0 && currentY < 8 
 						&& (!grid[currentX][currentY] 
 							|| grid[currentX][currentY]->color != grid[pos.x][pos.y]->color)) {
-
-					moves.insert( {currentX, currentY} );	
+					moves.insert( {currentX, currentY} );
 				}
 			}
 		}
+	}
+	
+	//kingside castling
+	if (!grid[pos.x][pos.y]->hasMoved && !grid[pos.x][7]->hasMoved && !inCheck 
+			&& !grid[pos.x][pos.y + 1] && !grid[pos.x][pos.y + 2]) {
+			grid[pos.x][pos.y + 1] = grid[pos.x][pos.y];
+			grid[pos.x][pos.y] = nullptr;
+			if (!checkForCheck()) {
+				kingsideCastle = {pos.x, pos.y + 2};
+				moves.insert(kingsideCastle);
+			} else {
+				kingsideCastle = {8, 8};
+			}
+			grid[pos.x][pos.y] = grid[pos.x][pos.y + 1];
+			grid[pos.x][pos.y + 1] = nullptr;
+	} else {
+		kingsideCastle = {8, 8};
+	}
+
+	//queenside castling
+	if (!grid[pos.x][pos.y]->hasMoved && !grid[pos.x][0]->hasMoved && !inCheck 
+			&& !grid[pos.x][pos.y - 1] && !grid[pos.x][pos.y - 2] && !grid[pos.x][pos.y - 3]) {
+			grid[pos.x][pos.y - 1] = grid[pos.x][pos.y];
+			grid[pos.x][pos.y] = nullptr;
+			if (!checkForCheck()) {
+				grid[pos.x][pos.y - 2] = grid[pos.x][pos.y - 1];
+				grid[pos.x][pos.y - 1] = nullptr;
+				if (!checkForCheck()) {
+					queensideCastle = {pos.x, pos.y - 2};
+					moves.insert(queensideCastle);
+				} else {
+					queensideCastle = {8, 8};
+				}
+				grid[pos.x][pos.y] = grid[pos.x][pos.y - 2];
+				grid[pos.x][pos.y - 2] = nullptr;
+			} else {
+				grid[pos.x][pos.y] = grid[pos.x][pos.y - 1];
+				grid[pos.x][pos.y - 1] = nullptr;
+				queensideCastle = {8, 8};
+			}
+	} else {
+		queensideCastle = {8, 8};
 	}
 
 	return moves;

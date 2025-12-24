@@ -24,7 +24,6 @@ struct Coord {
 	int y;
 	bool operator==(const Coord& other) const { return (x == other.x && y == other.y); }
 	bool operator!=(const Coord& other) const { return (x != other.x || y != other.y); }
-	//bool operator<(const Coord& other) const { return (x < other.x || y < other.y); } old implementation
 	bool operator<(const Coord& other) const { return (x != other.x) ? x < other.x : y < other.y; }
 };
 
@@ -32,6 +31,7 @@ struct Piece {
 	Color color;
 	PieceType type;
 	bool hasMoved = false;
+	Piece() : color(Color::NONE), type(PieceType::NONE) {}
 	Piece(Color c, PieceType t) : color(c), type(t) {}
 };
 
@@ -70,6 +70,10 @@ class ChessBoard {
 		std::set<std::pair<Coord, Coord>> availableMoves;
 		Color usersColor;
 		Color whoseTurnIsIt;
+		Coord enPassant;
+		Coord kingsideCastle;
+		Coord queensideCastle;
+		bool inCheck;
 };
 
 #endif

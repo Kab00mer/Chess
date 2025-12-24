@@ -16,6 +16,7 @@ static SDL_FRect rects[RANK][RANK];
 static std::map<std::string, SDL_Texture*> textures;
 
 static ChessBoard* board;
+static Piece boardState[RANK][RANK];
 static float mouseX = 0.0f;
 static float mouseY = 0.0f;
 static Coord selectedSquare = {RANK, RANK};
@@ -81,6 +82,13 @@ void startApp(ChessBoard* boardPtr) {
 	for (size_t i = 0; i < NUM_OF_PIECES; ++i) {
 		SDL_DestroySurface(surfaces[i]);
 	}
+	
+	//initialize boardState
+	for (int i = 0; i < RANK; ++i) {
+		for (int j = 0; j < RANK; ++j) {
+			boardState[i][j] = board->getPieceAt({i, j});
+		}
+	}
 }
 
 void continueApp() {
@@ -97,13 +105,26 @@ void continueApp() {
 		if (i % 8 == 7) { ++j; }
 	}
 
-	//drawing tiles of selected piece
-	SDL_SetRenderDrawColor(renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(renderer, &rects[selectedSquare.x][selectedSquare.y]);
+	//drawing tile of selected piece
+	SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	if (selectedSquare.x != 8) {
+		SDL_FRect r;
+		r.x = rects[selectedSquare.x][selectedSquare.y].x + SQUARE_SIZE / 6;
+		r.y = rects[selectedSquare.x][selectedSquare.y].y + SQUARE_SIZE / 6;
+		r.w = SQUARE_SIZE / 1.5;
+		r.h = SQUARE_SIZE / 1.5;
+		SDL_RenderFillRect(renderer, &r);
+	}
 
 	//drawing tiles of moves piece can take
+	SDL_SetRenderDrawColor(renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
 	for (Coord square : possibleMoves) {
-		SDL_RenderFillRect(renderer, &rects[square.x][square.y]);
+		SDL_FRect r;
+		r.x = rects[square.x][square.y].x + SQUARE_SIZE / 6;
+		r.y = rects[square.x][square.y].y + SQUARE_SIZE / 6;
+		r.w = SQUARE_SIZE / 1.5;
+		r.h = SQUARE_SIZE / 1.5;
+		SDL_RenderFillRect(renderer, &r);
 	}
 
 	//drawing tile if king is in check
@@ -119,10 +140,8 @@ void continueApp() {
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
 			if (i != selectedSquare.x || j != selectedSquare.y || !holding) {
-				Coord pos = {i, j};
-				Piece piece = board->getPieceAt(pos);
-				if (piece.color != Color::NONE) {
-					std::string key = convertPieceToStr(piece);
+				if (boardState[i][j].color != Color::NONE) {
+					std::string key = convertPieceToStr(boardState[i][j]);
 					SDL_RenderTexture(renderer, textures[key], NULL, &rects[i][j]);
 				}
 			}
@@ -131,7 +150,7 @@ void continueApp() {
 
 	//Render the piece at the mouse if they're holding it
 	if (holding) {
-		Piece selectedPiece = board->getPieceAt(selectedSquare);
+		Piece selectedPiece = boardState[selectedSquare.x][selectedSquare.y];
 		if (selectedPiece.color != Color::NONE) {
 			SDL_FRect r;
 			r.x = mouseX - SQUARE_SIZE / 2;
@@ -225,25 +244,36 @@ void holdPiece() {
 	Coord coord = convertMousePosToCoord();
 
 	if (coord.x != 8) {
-		Piece piece = board->getPieceAt(coord);
-		if (piece.color == board->getWhoseTurnIsIt()) {
+		if (boardState[coord.x][coord.y].color == board->getWhoseTurnIsIt()) {
 			possibleMoves = board->getMovesForPieceAt(coord);
 			holding = true;
 			selectedSquare = coord;
+		} else if (possibleMoves.find(coord) == possibleMoves.end()) {
+			possibleMoves.clear();
+			selectedSquare = {8, 8};
 		}
 	}
 }
 
 void releasePiece() {
 	Coord coord = convertMousePosToCoord();
-	if (coord.x != 8 && selectedSquare.x != 8 && selectedSquare != coord 
-			&& possibleMoves.find(coord) != possibleMoves.end()) {
-		board->movePiece(selectedSquare, coord);
-		board->printBoard();
+	if (possibleMoves.find(coord) != possibleMoves.end() || selectedSquare == coord) {
+		if (coord.x != 8 && selectedSquare.x != 8 && selectedSquare != coord) {
+			board->movePiece(selectedSquare, coord);
+			board->printBoard();
 
+			for (int i = 0; i < RANK; ++i) {
+				for (int j = 0; j < RANK; ++j) {
+					boardState[i][j] = board->getPieceAt({i, j});
+				}
+			}
+
+			possibleMoves.clear();
+			selectedSquare = {8, 8};
+		}
+	} else {
 		possibleMoves.clear();
-		selectedSquare.x = 8;
-		selectedSquare.y = 8;
+		selectedSquare = {8, 8};
 	}
 
 	holding = false;

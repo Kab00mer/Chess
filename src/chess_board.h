@@ -35,12 +35,19 @@ struct Piece {
 	bool hasMoved = false;
 	Piece() : color(Color::NONE), type(PieceType::NONE) {}
 	Piece(Color c, PieceType t) : color(c), type(t) {}
+	Piece& operator=(const Piece& other) {	
+		if (this != &other) {
+			color = other.color;
+			type = other.type;
+			hasMoved = other.hasMoved;
+		}
+		return *this;
+	}
 };
 
 class ChessBoard {
 	public :
-		ChessBoard(Color color);
-		~ChessBoard();
+		ChessBoard(Color color = Color::WHITE);
 
 		//getters and setters
 		Piece getPieceAt(const Coord) const;
@@ -74,7 +81,7 @@ class ChessBoard {
 		std::set<Coord> raycastLineAt(const Coord, const int x, const int y) const;
 
 		//data memebers
-		Piece* grid[8][8];
+		Piece grid[8][8];
 		std::set<std::pair<Coord, Coord>> availableMoves;
 		Color usersColor;
 		Color whoseTurnIsIt;

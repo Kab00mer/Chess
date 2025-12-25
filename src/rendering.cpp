@@ -13,6 +13,7 @@ const size_t NUM_OF_PIECES = 12;
 static SDL_Window* window;
 static SDL_Renderer* renderer;
 static SDL_FRect rects[RANK][RANK];
+static SDL_FRect promotionRects[4];
 static std::map<std::string, SDL_Texture*> textures;
 
 static ChessBoard* board;
@@ -22,6 +23,14 @@ static float mouseY = 0.0f;
 static Coord selectedSquare = {RANK, RANK};
 static std::set<Coord> possibleMoves;
 static bool holding = false;
+static bool promotionScreen = false;
+static Coord promotionSquare;
+static Piece promotionPieces[] = {
+	Piece(Color::NONE, PieceType::BISHOP), 
+	Piece(Color::NONE, PieceType::KNIGHT),
+	Piece(Color::NONE, PieceType::ROOK), 
+	Piece(Color::NONE, PieceType::QUEEN)
+};
 
 void startApp(ChessBoard* boardPtr) {
 	board = boardPtr;
@@ -89,77 +98,115 @@ void startApp(ChessBoard* boardPtr) {
 			boardState[i][j] = board->getPieceAt({i, j});
 		}
 	}
+
+	//setting up the promotion board
+	for (int i = 0; i < 4; ++i) {
+		promotionRects[i] = rects[3][2 + i];
+	}
 }
 
 void continueApp() {
 	SDL_SetRenderDrawColor(renderer, 100, 100, 100, 200);
 	SDL_RenderClear(renderer);
 
-	//drawing checkered squares
-	Color current = board->getUsersColor();
-	int j = (current == Color::WHITE) ? 1 : 0;
-	for (size_t i = 0; i < RANK * RANK; ++i) {
-		(i + j) % 2 == 0 ? SDL_SetRenderDrawColor(renderer, 20, 20, 20, SDL_ALPHA_OPAQUE) 
-			: SDL_SetRenderDrawColor(renderer, 220, 220, 220, SDL_ALPHA_OPAQUE);
-		SDL_RenderFillRect(renderer, &rects[i / 8][i % 8]);		
-		if (i % 8 == 7) { ++j; }
-	}
+	if (!promotionScreen) {
+		//drawing checkered squares
+		Color current = board->getUsersColor();
+		int j = (current == Color::WHITE) ? 1 : 0;
+		for (size_t i = 0; i < RANK * RANK; ++i) {
+			(i + j) % 2 == 0 ? SDL_SetRenderDrawColor(renderer, 20, 20, 20, SDL_ALPHA_OPAQUE) 
+				: SDL_SetRenderDrawColor(renderer, 220, 220, 220, SDL_ALPHA_OPAQUE);
+			SDL_RenderFillRect(renderer, &rects[i / 8][i % 8]);		
+			if (i % 8 == 7) { ++j; }
+		}
 
-	//drawing tile of selected piece
-	SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	if (selectedSquare.x != 8) {
-		SDL_FRect r;
-		r.x = rects[selectedSquare.x][selectedSquare.y].x + SQUARE_SIZE / 6;
-		r.y = rects[selectedSquare.x][selectedSquare.y].y + SQUARE_SIZE / 6;
-		r.w = SQUARE_SIZE / 1.5;
-		r.h = SQUARE_SIZE / 1.5;
-		SDL_RenderFillRect(renderer, &r);
-	}
+		//drawing tile of selected piece
+		SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+		if (selectedSquare.x != 8) {
+			SDL_FRect r;
+			r.x = rects[selectedSquare.x][selectedSquare.y].x + SQUARE_SIZE / 6;
+			r.y = rects[selectedSquare.x][selectedSquare.y].y + SQUARE_SIZE / 6;
+			r.w = SQUARE_SIZE / 1.5;
+			r.h = SQUARE_SIZE / 1.5;
+			SDL_RenderFillRect(renderer, &r);
+		}
 
-	//drawing tiles of moves piece can take
-	SDL_SetRenderDrawColor(renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
-	for (Coord square : possibleMoves) {
-		SDL_FRect r;
-		r.x = rects[square.x][square.y].x + SQUARE_SIZE / 6;
-		r.y = rects[square.x][square.y].y + SQUARE_SIZE / 6;
-		r.w = SQUARE_SIZE / 1.5;
-		r.h = SQUARE_SIZE / 1.5;
-		SDL_RenderFillRect(renderer, &r);
-	}
+		//drawing tiles of moves piece can take
+		SDL_SetRenderDrawColor(renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
+		for (Coord square : possibleMoves) {
+			SDL_FRect r;
+			r.x = rects[square.x][square.y].x + SQUARE_SIZE / 6;
+			r.y = rects[square.x][square.y].y + SQUARE_SIZE / 6;
+			r.w = SQUARE_SIZE / 1.5;
+			r.h = SQUARE_SIZE / 1.5;
+			SDL_RenderFillRect(renderer, &r);
+		}
 
-	//drawing tile if king is in check
-	/*
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-	if (board->inCheck()) {
-		std::pair<int, int> king = board-getCheckedKing();
-		SDL_RenderFillRect(renderer, &rects[king.first * 8 + king.second]);
-	}
-	*/
+		//drawing tile if king is in check
+		SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+		if (board->getIfInCheck()) {
+			bool found = false;
+			int i = 0;
+			int j = 0;
+			while (!found && i < RANK) {
+				j = 0;
+				while (!found && j < RANK) {
+					if (boardState[i][j].color == board->getWhoseTurnIsIt() 
+							&& boardState[i][j].type == PieceType::KING) {
+						found = true;
+					} else {
+						++j;
+					}
+				}
+				if (!found) { ++i; }
+			}
 
-	//go through all of the board's squares and draw pieces
-	for (int i = 0; i < 8; ++i) {
-		for (int j = 0; j < 8; ++j) {
-			if (i != selectedSquare.x || j != selectedSquare.y || !holding) {
-				if (boardState[i][j].color != Color::NONE) {
-					std::string key = convertPieceToStr(boardState[i][j]);
-					SDL_RenderTexture(renderer, textures[key], NULL, &rects[i][j]);
+			SDL_FRect r;
+			r.x = rects[i][j].x + SQUARE_SIZE / 6;
+			r.y = rects[i][j].y + SQUARE_SIZE / 6;
+			r.w = SQUARE_SIZE / 1.5;
+			r.h = SQUARE_SIZE / 1.5;
+			SDL_RenderFillRect(renderer, &r);
+		}
+
+		//go through all of the board's squares and draw pieces
+		for (int i = 0; i < 8; ++i) {
+			for (int j = 0; j < 8; ++j) {
+				if (i != selectedSquare.x || j != selectedSquare.y || !holding) {
+					if (boardState[i][j].color != Color::NONE) {
+						std::string key = convertPieceToStr(boardState[i][j]);
+						SDL_RenderTexture(renderer, textures[key], NULL, &rects[i][j]);
+					}
 				}
 			}
 		}
-	}
 
-	//Render the piece at the mouse if they're holding it
-	if (holding) {
-		Piece selectedPiece = boardState[selectedSquare.x][selectedSquare.y];
-		if (selectedPiece.color != Color::NONE) {
-			SDL_FRect r;
-			r.x = mouseX - SQUARE_SIZE / 2;
-			r.y = mouseY - SQUARE_SIZE / 2;
-			r.w = SQUARE_SIZE;
-			r.h = SQUARE_SIZE;
+		//Render the piece at the mouse if they're holding it
+		if (holding) {
+			Piece selectedPiece = boardState[selectedSquare.x][selectedSquare.y];
+			if (selectedPiece.color != Color::NONE) {
+				SDL_FRect r;
+				r.x = mouseX - SQUARE_SIZE / 2;
+				r.y = mouseY - SQUARE_SIZE / 2;
+				r.w = SQUARE_SIZE;
+				r.h = SQUARE_SIZE;
 		
-			std::string key = convertPieceToStr(selectedPiece);
-			SDL_RenderTexture(renderer, textures[key], NULL, &r);
+				std::string key = convertPieceToStr(selectedPiece);
+				SDL_RenderTexture(renderer, textures[key], NULL, &r);
+			}
+		}
+
+	} else {
+		SDL_SetRenderDrawColor(renderer, 200, 200, 200, SDL_ALPHA_OPAQUE);
+		Color current = board->getWhoseTurnIsIt();
+		int counter = 0;
+
+		for (Piece p : promotionPieces) {
+			promotionPieces[counter].color = current;
+			SDL_RenderFillRect(renderer, &promotionRects[counter]);
+			std::string key = convertPieceToStr(p);
+			SDL_RenderTexture(renderer, textures[key], NULL, &promotionRects[counter]);
+			++counter;
 		}
 	}
 
@@ -241,40 +288,77 @@ Coord convertMousePosToCoord() {
 }
 
 void holdPiece() {
-	Coord coord = convertMousePosToCoord();
+	if (!promotionScreen) {
+		Coord coord = convertMousePosToCoord();
 
-	if (coord.x != 8) {
-		if (boardState[coord.x][coord.y].color == board->getWhoseTurnIsIt()) {
-			possibleMoves = board->getMovesForPieceAt(coord);
-			holding = true;
-			selectedSquare = coord;
-		} else if (possibleMoves.find(coord) == possibleMoves.end()) {
-			possibleMoves.clear();
-			selectedSquare = {8, 8};
+		if (coord.x != 8) {
+			if (boardState[coord.x][coord.y].color == board->getWhoseTurnIsIt()) {
+				possibleMoves = board->getMovesForPieceAt(coord);
+				holding = true;
+				selectedSquare = coord;
+			} else if (possibleMoves.find(coord) == possibleMoves.end()) {
+				possibleMoves.clear();
+				selectedSquare = {8, 8};
+			}
 		}
 	}
 }
 
 void releasePiece() {
-	Coord coord = convertMousePosToCoord();
-	if (possibleMoves.find(coord) != possibleMoves.end() || selectedSquare == coord) {
-		if (coord.x != 8 && selectedSquare.x != 8 && selectedSquare != coord) {
-			board->movePiece(selectedSquare, coord);
-			board->printBoard();
+	if (promotionScreen) {
+		SDL_FPoint point = {mouseX, mouseY};
+		bool found = false;
+		int counter = 0;
+		while (!found && counter < 4) {
+			SDL_PointInRectFloat(&point, &promotionRects[counter]) ? found = true : ++counter;
+		}
 
-			for (int i = 0; i < RANK; ++i) {
-				for (int j = 0; j < RANK; ++j) {
-					boardState[i][j] = board->getPieceAt({i, j});
+		if (found) {
+			board->setNextPawnPromotion(promotionPieces[counter].type);
+			promotionScreen = false;
+			updateBoard(promotionSquare);
+			promotionSquare = {8, 8};
+		}
+
+	} else {
+		Coord coord = convertMousePosToCoord();
+		if (possibleMoves.find(coord) != possibleMoves.end() || selectedSquare == coord) {
+			if (coord.x != 8 && selectedSquare.x != 8 && selectedSquare != coord) {
+				if (boardState[selectedSquare.x][selectedSquare.y].type == PieceType::PAWN 
+						&& (coord.x == 7 || coord.x == 0)) {
+					promotionScreen = true;
+					promotionSquare = coord;
+				} else {
+					updateBoard(coord);	
 				}
 			}
-
+		} else {
 			possibleMoves.clear();
 			selectedSquare = {8, 8};
 		}
-	} else {
-		possibleMoves.clear();
-		selectedSquare = {8, 8};
+
+		holding = false;
+	}
+}
+
+void updateBoard(const Coord coord) {
+	board->movePiece(selectedSquare, coord);
+	board->printBoard();
+
+	if (board->getIfMated()) {
+		Color loser = board->getWhoseTurnIsIt();
+		loser == Color::WHITE ? std::cout << "BLACK" : std::cout << "WHITE";
+		std::cout << " WON !!!!!!" << '\n';
+	} else if (board->getIfStalemated()) {
+		std::cout << "IT IS A DRAW!!!!!!" << "\n";
 	}
 
-	holding = false;
+	for (int i = 0; i < RANK; ++i) {
+		for (int j = 0; j < RANK; ++j) {
+			boardState[i][j] = board->getPieceAt({i, j});
+		}
+	}
+
+	possibleMoves.clear();
+	selectedSquare = {8, 8};
 }

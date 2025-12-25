@@ -25,6 +25,8 @@ struct Coord {
 	bool operator==(const Coord& other) const { return (x == other.x && y == other.y); }
 	bool operator!=(const Coord& other) const { return (x != other.x || y != other.y); }
 	bool operator<(const Coord& other) const { return (x != other.x) ? x < other.x : y < other.y; }
+	Coord() : x(8), y(8) {}
+	Coord(int paramX, int paramY) : x(paramX), y(paramY) {}
 };
 
 struct Piece {
@@ -45,35 +47,40 @@ class ChessBoard {
 		std::set<Coord> getMovesForPieceAt(const Coord) const;
 		Color getUsersColor() const;
 		Color getWhoseTurnIsIt() const;
+		void setNextPawnPromotion(const PieceType);
+		bool getIfInCheck() const;
+		bool getIfMated() const;
+		bool getIfStalemated() const;
 
-		//board logic
-		void updateMoves();
+		//moving
 		void movePiece(const Coord, const Coord);
-		bool checkForCheck() const;
-		bool checkForMate() const;
-
-		//Piece logic for possible moves
-		std::set<Coord> possiblePawnMoves(const Coord);
-		std::set<Coord> possibleBishopMoves(const Coord);
-		std::set<Coord> possibleKnightMoves(const Coord);
-		std::set<Coord> possibleRookMoves(const Coord);
-		std::set<Coord> possibleQueenMoves(const Coord);
-		std::set<Coord> possibleKingMoves(const Coord);
-		std::set<Coord> raycastLineAt(const Coord, const int x, const int y);
 
 		//printing board
 		void printBoard() const;
-		void printCollisionBoard() const;
 
 	private :
+		//board logic
+		void updateMoves();
+		bool calculateInCheck();
+
+		//Piece logic for possible moves
+		std::set<Coord> getPossibleMovesAt(const Coord);
+		std::set<Coord> possiblePawnMoves(const Coord) const;
+		std::set<Coord> possibleBishopMoves(const Coord) const;
+		std::set<Coord> possibleKnightMoves(const Coord) const;
+		std::set<Coord> possibleRookMoves(const Coord) const;
+		std::set<Coord> possibleQueenMoves(const Coord) const;
+		std::set<Coord> possibleKingMoves(const Coord);
+		std::set<Coord> raycastLineAt(const Coord, const int x, const int y) const;
+
+		//data memebers
 		Piece* grid[8][8];
 		std::set<std::pair<Coord, Coord>> availableMoves;
 		Color usersColor;
 		Color whoseTurnIsIt;
 		Coord enPassant;
-		Coord kingsideCastle;
-		Coord queensideCastle;
 		bool inCheck;
+		PieceType nextPromotion;
 };
 
 #endif

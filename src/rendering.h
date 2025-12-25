@@ -17,5 +17,6 @@ Coord convertMousePosToCoord();
 //gets called by input.cpp when user clicks
 void holdPiece();
 void releasePiece();
+void updateBoard(const Coord);
 
 #endif

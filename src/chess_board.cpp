@@ -5,6 +5,7 @@ static const Coord emptyCoord = {8, 8};
 static const Piece emptyPiece = Piece(Color::NONE, PieceType::NONE);
 
 ChessBoard::ChessBoard(Color color) {
+	turn = 0;
 	whoseTurnIsIt = Color::WHITE;
 	usersColor = color;
 	nextPromotion = PieceType::NONE;
@@ -12,7 +13,7 @@ ChessBoard::ChessBoard(Color color) {
 	Color opponent = (usersColor == Color::WHITE) ? Color::BLACK : Color::WHITE;
 
 	for (size_t i = 0; i < 8; ++i) {
-		for (int j = 2; i < 6; ++j) {
+		for (int j = 2; j < 6; ++j) {
 			grid[j][i] = emptyPiece;
 		}
 
@@ -65,6 +66,8 @@ bool ChessBoard::getIfStalemated() const { return (availableMoves.size() == 0 &&
 
 void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 	if (grid[pos1.x][pos1.y].type != PieceType::NONE) {
+		Move current;
+
 		grid[pos1.x][pos1.y].hasMoved = true;
 		
 		grid[pos2.x][pos2.y] = grid[pos1.x][pos1.y];
@@ -106,14 +109,47 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 
 		whoseTurnIsIt = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
 		updateMoves();
+		++turn;
 
 	} else {
 		std::cout << "ERROR: Tried to move a nonexistant piece" << '\n';
 	}
 }
 
+void ChessBoard::undoMove() {
+	Move current = moveStack.top();
+	moveStack.pop();
+
+	grid[current.from.x][current.from.y] = grid[current.to.x][current.to.y];
+	grid[current.to.x][current.to.y] = current.pieceToUndo;
+
+	grid[current.from.x][current.from.y].hasMoved = !current.firstTimePieceMoved;
+
+	if (current.passantOrCastle) {
+		if (grid[current.from.x][current.from.y].type == PieceType::KING) {
+			//undo castling
+			if (current.to.y == 6) {
+				grid[current.from.x][7] = grid[current.from.x][5];
+				grid[current.from.x][5] = emptyPiece;
+			} else {
+				grid[current.from.x][0] = grid[current.from.x][3];
+				grid[current.from.x][3] = emptyPiece;
+			}
+		} else {
+			//undo enPassant
+			Color c = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
+			grid[current.from.x][current.to.y] = Piece(c, PieceType::PAWN, true); //it has moved
+		}
+		
+	}
+
+	whoseTurnIsIt = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
+	updateMoves();
+	--turn;
+}
+
 void ChessBoard::printBoard() const {
-	std::cout << '\n';
+	std::cout << '\n' << "=============" << " Turn " << turn << " =============" << '\n';
 	for (int i = 0; i < 8; ++i) {
 		std::cout << "| ";
 		for (int j = 0; j < 8; ++j) {
@@ -166,10 +202,7 @@ void ChessBoard::updateMoves() {
 		for (int j = 0; j < 8; ++j) {
 			if (grid[i][j].type != PieceType::NONE && grid[i][j].color == whoseTurnIsIt) {
 				Coord current = {i, j};
-
-				std::set<Coord> results = getPossibleMovesAt(current);
-
-				for (Coord c : results) {
+				for (Coord c : getPossibleMovesAt(current, false)) { //we want all moves including attack moves
 					Piece temp = grid[c.x][c.y]; 
 					grid[c.x][c.y] = grid[current.x][current.y];
 					grid[current.x][current.y] = emptyPiece;
@@ -209,9 +242,9 @@ bool ChessBoard::calculateInCheck() {
 	} else {
 		for (int i = 0; i < 8; ++i) {
 			for (int j = 0; j < 8; ++j) {
-				if (grid[i][j].type != PieceType::NONE) {
+				if (grid[i][j].type != PieceType::NONE && grid[i][j].color != whoseTurnIsIt) {
 					Coord current = {i, j};
-					for (Coord c : getPossibleMovesAt(current)) {
+					for (Coord c : getPossibleMovesAt(current, true)) { //we only want attack moves
 						if (c == king) {
 							return true;
 						}
@@ -224,12 +257,12 @@ bool ChessBoard::calculateInCheck() {
 	return false;
 }
 
-std::set<Coord> ChessBoard::getPossibleMovesAt(const Coord pos) {
+std::set<Coord> ChessBoard::getPossibleMovesAt(const Coord pos, const bool onlyAttackMoves) {
 	std::set<Coord> results;
 	switch (grid[pos.x][pos.y].type) {
 		case PieceType::PAWN :
 			//std::cout << "PAWN" << '\n';
-			results = possiblePawnMoves(pos);
+			results = possiblePawnMoves(pos, onlyAttackMoves);
 			break;
 		case PieceType::BISHOP :
 			//std::cout << "BISHOP" << '\n';
@@ -249,14 +282,14 @@ std::set<Coord> ChessBoard::getPossibleMovesAt(const Coord pos) {
 			break;
 		case PieceType::KING :
 			//std::cout << "KING" << '\n';
-			results = possibleKingMoves(pos);
+			results = possibleKingMoves(pos, onlyAttackMoves);
 			break;
 	}
 	//std::cout << "FINISHED GETTING" << '\n';
 	return results;
 }
 
-std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos) const {
+std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos, const bool onlyAttackMoves) const {
 	std::set<Coord> moves;
 
 	int offset;
@@ -271,7 +304,7 @@ std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos) const {
 
 	if (pos.x + offset >= 0 && pos.x + offset < 8) {
 		//pawn forwards
-		if (grid[pos.x + offset][pos.y].type == PieceType::NONE) {
+		if (!onlyAttackMoves && grid[pos.x + offset][pos.y].type == PieceType::NONE) {
 			moves.insert( {pos.x + offset, pos.y} );
 			if (!grid[pos.x][pos.y].hasMoved && pos.x + offset * 2 >= 0
 					&& pos.x + offset * 2 < 8 && grid[pos.x + offset * 2][pos.y].type == PieceType::NONE) {
@@ -375,7 +408,7 @@ std::set<Coord> ChessBoard::possibleQueenMoves(const Coord pos) const {
 	return moves;
 }
 
-std::set<Coord> ChessBoard::possibleKingMoves(const Coord pos) {
+std::set<Coord> ChessBoard::possibleKingMoves(const Coord pos, const bool onlyAttackMoves) {
 	std::set<Coord> moves;
 
 	for (int i = -1; i <= 1; ++i) {
@@ -393,48 +426,54 @@ std::set<Coord> ChessBoard::possibleKingMoves(const Coord pos) {
 		}
 	}
 
-	//kingside castling
-	if (!grid[pos.x][pos.y].hasMoved && !grid[pos.x][7].hasMoved && !inCheck 
-			&& pos.y + 1 < 8 && grid[pos.x][pos.y + 1].type == PieceType::NONE 
-			&& pos.y + 2 < 8 && grid[pos.x][pos.y + 2].type == PieceType::NONE
-			&& grid[pos.x][7].type == PieceType::ROOK) {
+	if (!onlyAttackMoves) {
+		//kingside castling
+		if (!grid[pos.x][pos.y].hasMoved && !grid[pos.x][7].hasMoved && !inCheck 
+				&& pos.y + 1 < 8 && grid[pos.x][pos.y + 1].type == PieceType::NONE 
+				&& pos.y + 2 < 8 && grid[pos.x][pos.y + 2].type == PieceType::NONE
+				&& grid[pos.x][7].type == PieceType::ROOK) {
 
-			grid[pos.x][pos.y + 1] = grid[pos.x][pos.y];
+				Piece king = grid[pos.x][pos.y];
+
+				grid[pos.x][pos.y + 1] = king;
+				grid[pos.x][pos.y] = emptyPiece;
+
+				if (!calculateInCheck()) {
+					moves.insert(Coord(pos.x, pos.y + 2));
+				} 
+	
+				grid[pos.x][pos.y] = king;
+				grid[pos.x][pos.y + 1] = emptyPiece;
+		} 
+
+		//queenside castling
+		if (!grid[pos.x][pos.y].hasMoved && !grid[pos.x][0].hasMoved && !inCheck 
+				&& pos.y - 1 >= 0 && grid[pos.x][pos.y - 1].type == PieceType::NONE 
+				&& pos.y - 2 >= 0 && grid[pos.x][pos.y - 2].type == PieceType::NONE 
+				&& pos.y - 3 >= 0 && grid[pos.x][pos.y - 3].type == PieceType::NONE
+				&& grid[pos.x][0].type == PieceType::ROOK) {
+
+			Piece king = grid[pos.x][pos.y];
+
+			grid[pos.x][pos.y - 1] = king;
 			grid[pos.x][pos.y] = emptyPiece;
 
 			if (!calculateInCheck()) {
-				moves.insert(Coord(pos.x, pos.y + 2));
-			} 
 
-			grid[pos.x][pos.y] = grid[pos.x][pos.y + 1];
-			grid[pos.x][pos.y + 1] = emptyPiece;
-	} 
+				grid[pos.x][pos.y - 2] = king;
+				grid[pos.x][pos.y - 1] = emptyPiece;
 
-	//queenside castling
-	if (!grid[pos.x][pos.y].hasMoved && !grid[pos.x][0].hasMoved && !inCheck 
-			&& pos.y - 1 >= 0 && grid[pos.x][pos.y - 1].type == PieceType::NONE 
-			&& pos.y - 2 >= 0 && grid[pos.x][pos.y - 2].type == PieceType::NONE 
-			&& pos.y - 3 >= 0 && grid[pos.x][pos.y - 3].type == PieceType::NONE
-			&& grid[pos.x][0].type == PieceType::ROOK) {
+				if (!calculateInCheck()) {
+					moves.insert(Coord(pos.x, pos.y - 2));
+				} 
 
-		grid[pos.x][pos.y - 1] = grid[pos.x][pos.y];
-		grid[pos.x][pos.y] = emptyPiece;
-
-		if (!calculateInCheck()) {
-
-			grid[pos.x][pos.y - 2] = grid[pos.x][pos.y - 1];
-			grid[pos.x][pos.y - 1] = emptyPiece;
-
-			if (!calculateInCheck()) {
-				moves.insert(Coord(pos.x, pos.y - 2));
-			} 
-
-			grid[pos.x][pos.y] = grid[pos.x][pos.y - 2];
-			grid[pos.x][pos.y - 2] = emptyPiece;
-
-		} else {
-			grid[pos.x][pos.y] = grid[pos.x][pos.y - 1];
-			grid[pos.x][pos.y - 1] = emptyPiece;
+				grid[pos.x][pos.y] = king;
+				grid[pos.x][pos.y - 2] = emptyPiece;
+	
+			} else {
+				grid[pos.x][pos.y] = king;
+				grid[pos.x][pos.y - 1] = emptyPiece;
+			}
 		}
 	}
 

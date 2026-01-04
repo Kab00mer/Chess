@@ -7,8 +7,6 @@ int main(int argc, char* argv[]) {
 	ChessBoard* ptr = new ChessBoard(Color::WHITE);	
 	startApp(ptr);	
 	
-	ptr->printBoard();
-	
 	bool running = true;
 	while (running) {
 		continueApp();

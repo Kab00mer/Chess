@@ -2,6 +2,7 @@
 #define CHESS_BOARD_H
 
 #include <set>
+#include <stack>
 
 enum class Color {
 	WHITE,
@@ -20,8 +21,7 @@ enum class PieceType {
 };
 
 struct Coord {
-	int x;
-	int y;
+	int x, y;
 	bool operator==(const Coord& other) const { return (x == other.x && y == other.y); }
 	bool operator!=(const Coord& other) const { return (x != other.x || y != other.y); }
 	bool operator<(const Coord& other) const { return (x != other.x) ? x < other.x : y < other.y; }
@@ -32,9 +32,9 @@ struct Coord {
 struct Piece {
 	Color color;
 	PieceType type;
-	bool hasMoved = false;
-	Piece() : color(Color::NONE), type(PieceType::NONE) {}
-	Piece(Color c, PieceType t) : color(c), type(t) {}
+	bool hasMoved;
+	Piece() : color(Color::NONE), type(PieceType::NONE), hasMoved(false) {}
+	Piece(Color c, PieceType t, bool h = false) : color(c), type(t), hasMoved(h) {}
 	Piece& operator=(const Piece& other) {	
 		if (this != &other) {
 			color = other.color;
@@ -43,6 +43,18 @@ struct Piece {
 		}
 		return *this;
 	}
+};
+
+struct Move {
+	Coord from, to;
+	Piece pieceToUndo;
+	bool passantOrCastle;
+	bool firstTimePieceMoved;
+
+	Move() : from(Coord()), to(Coord()), pieceToUndo(Piece()), passantOrCastle(false)
+			 , firstTimePieceMoved(false) {}
+	Move(Coord f, Coord t, Piece p, bool pasOrCas, bool firstTime) : from(f), to(t)
+		, pieceToUndo(p), passantOrCastle(pasOrCas), firstTimePieceMoved(firstTime) {}
 };
 
 class ChessBoard {
@@ -61,6 +73,7 @@ class ChessBoard {
 
 		//moving
 		void movePiece(const Coord, const Coord);
+		void undoMove();
 
 		//printing board
 		void printBoard() const;
@@ -71,23 +84,25 @@ class ChessBoard {
 		bool calculateInCheck();
 
 		//Piece logic for possible moves
-		std::set<Coord> getPossibleMovesAt(const Coord);
-		std::set<Coord> possiblePawnMoves(const Coord) const;
+		std::set<Coord> getPossibleMovesAt(const Coord, const bool);
+		std::set<Coord> possiblePawnMoves(const Coord, const bool) const;
 		std::set<Coord> possibleBishopMoves(const Coord) const;
 		std::set<Coord> possibleKnightMoves(const Coord) const;
 		std::set<Coord> possibleRookMoves(const Coord) const;
 		std::set<Coord> possibleQueenMoves(const Coord) const;
-		std::set<Coord> possibleKingMoves(const Coord);
+		std::set<Coord> possibleKingMoves(const Coord, const bool);
 		std::set<Coord> raycastLineAt(const Coord, const int x, const int y) const;
 
 		//data memebers
 		Piece grid[8][8];
+		int turn;
 		std::set<std::pair<Coord, Coord>> availableMoves;
 		Color usersColor;
 		Color whoseTurnIsIt;
 		Coord enPassant;
 		bool inCheck;
 		PieceType nextPromotion;
+		std::stack<Move> moveStack;
 };
 
 #endif

@@ -50,11 +50,13 @@ struct Move {
 	Piece pieceToUndo;
 	bool passantOrCastle;
 	bool firstTimePieceMoved;
+	bool promotion;
 
 	Move() : from(Coord()), to(Coord()), pieceToUndo(Piece()), passantOrCastle(false)
-			 , firstTimePieceMoved(false) {}
-	Move(Coord f, Coord t, Piece p, bool pasOrCas, bool firstTime) : from(f), to(t)
-		, pieceToUndo(p), passantOrCastle(pasOrCas), firstTimePieceMoved(firstTime) {}
+			 , firstTimePieceMoved(false), promotion(false) {}
+	Move(Coord f, Coord t, Piece p, bool pasOrCas, bool firstTime, bool pro) : from(f), to(t)
+		, pieceToUndo(p), passantOrCastle(pasOrCas), firstTimePieceMoved(firstTime)
+		, promotion(pro) {}
 };
 
 class ChessBoard {

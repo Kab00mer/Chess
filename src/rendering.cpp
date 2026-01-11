@@ -1,4 +1,5 @@
 #include "rendering.h"
+#include "robots.h"
 #include "SDL3/SDL.h"
 #include <iostream>
 #include <map>
@@ -103,6 +104,10 @@ void startApp(ChessBoard* boardPtr) {
 	for (int i = 0; i < 4; ++i) {
 		promotionRects[i] = rects[3][2 + i];
 	}
+
+	//setup robots
+	initiateRobots(board);
+	tryToMoveBot();
 }
 
 void continueApp() {
@@ -316,7 +321,11 @@ void releasePiece() {
 		if (found) {
 			board->setNextPawnPromotion(promotionPieces[counter].type);
 			promotionScreen = false;
-			updateBoard(promotionSquare);
+
+			board->movePiece(selectedSquare, promotionSquare);
+			updateBoard();
+			tryToMoveBot();
+
 			promotionSquare = {8, 8};
 		}
 
@@ -329,7 +338,9 @@ void releasePiece() {
 					promotionScreen = true;
 					promotionSquare = coord;
 				} else {
-					updateBoard(coord);	
+					board->movePiece(selectedSquare, coord);
+					updateBoard();	
+					tryToMoveBot();
 				}
 			}
 		} else {
@@ -341,8 +352,12 @@ void releasePiece() {
 	}
 }
 
-void updateBoard(const Coord coord) {
-	board->movePiece(selectedSquare, coord);
+void keyPressed() {
+	board->undoMove();
+	updateBoard();
+}
+
+void updateBoard() {
 	board->printBoard();
 
 	if (board->getIfMated()) {
@@ -361,4 +376,11 @@ void updateBoard(const Coord coord) {
 
 	possibleMoves.clear();
 	selectedSquare = {8, 8};
+}
+
+void tryToMoveBot() {
+	if (board->getWhoseTurnIsIt() != board->getUsersColor()) {
+		randomRobot();
+	}
+	updateBoard();
 }

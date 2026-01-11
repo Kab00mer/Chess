@@ -17,6 +17,12 @@ Coord convertMousePosToCoord();
 //gets called by input.cpp when user clicks
 void holdPiece();
 void releasePiece();
-void updateBoard(const Coord);
+void keyPressed();
+
+//applying board state
+void updateBoard();
+
+//robot
+void tryToMoveBot();
 
 #endif

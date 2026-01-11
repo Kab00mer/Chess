@@ -11,12 +11,12 @@ bool checkInput() {
 		}
 		if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
 			holdPiece();			
-
 		} else if (event.type == SDL_EVENT_MOUSE_MOTION) {
 			setCurrentMousePos(event.button.x, event.button.y);	
-
 		} else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
 			releasePiece();
+		} else if (event.type == SDL_EVENT_KEY_DOWN) {
+			keyPressed();
 		}
 	}
 

@@ -66,10 +66,16 @@ bool ChessBoard::getIfStalemated() const { return (availableMoves.size() == 0 &&
 
 void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 	if (grid[pos1.x][pos1.y].type != PieceType::NONE) {
-		Move current;
+		Move currentMove;
+		currentMove.from = pos1;
+		currentMove.to = pos2;
 
-		grid[pos1.x][pos1.y].hasMoved = true;
-		
+		if (!grid[pos1.x][pos2.y].hasMoved) {
+			grid[pos1.x][pos1.y].hasMoved = true;
+			currentMove.firstTimePieceMoved = true;
+		}
+
+		currentMove.pieceToUndo = grid[pos2.x][pos2.y];	
 		grid[pos2.x][pos2.y] = grid[pos1.x][pos1.y];
 		grid[pos1.x][pos1.y] = emptyPiece;
 
@@ -78,12 +84,14 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 				if (nextPromotion == PieceType::NONE) {
 					std::cout << "ERROR: No piece type was set for the next pawn promotion!" << '\n';
 				} else {
+					currentMove.promotion = true;
 					grid[pos2.x][pos2.y].type = nextPromotion;
 					nextPromotion = PieceType::NONE;
 				}
 				enPassant = emptyCoord;
 
 			} else if (enPassant.x != 8 && pos2 == enPassant) {
+				currentMove.passantOrCastle = true;
 				grid[pos1.x][pos2.y] = emptyPiece;
 			} else if (pos2.x - pos1.x == 2) {
 				enPassant = Coord(pos1.x + 1, pos1.y);
@@ -99,13 +107,17 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 
 		if (grid[pos2.x][pos2.y].type == PieceType::KING) {
 			if (pos2.y == 6 && pos2.y - pos1.y == 2) {
+				currentMove.passantOrCastle = true;
 				grid[pos2.x][pos2.y - 1] = grid[pos2.x][7];
 				grid[pos2.x][7] = emptyPiece;
 			} else if (pos2.y == 2 && pos1.y - pos2.y == 2) {
+				currentMove.passantOrCastle = true;
 				grid[pos2.x][pos2.y + 1] = grid[pos2.x][0];
 				grid[pos2.x][0] = emptyPiece;
 			}
 		}
+
+		moveStack.push(currentMove);
 
 		whoseTurnIsIt = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
 		updateMoves();
@@ -117,6 +129,11 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 }
 
 void ChessBoard::undoMove() {
+	if (moveStack.empty()) {
+		std::cout << "ERROR: Tried to undo with no moves left" << '\n';
+		return;
+	}
+
 	Move current = moveStack.top();
 	moveStack.pop();
 
@@ -125,6 +142,7 @@ void ChessBoard::undoMove() {
 
 	grid[current.from.x][current.from.y].hasMoved = !current.firstTimePieceMoved;
 
+	bool reversedPassant = false;
 	if (current.passantOrCastle) {
 		if (grid[current.from.x][current.from.y].type == PieceType::KING) {
 			//undo castling
@@ -137,15 +155,20 @@ void ChessBoard::undoMove() {
 			}
 		} else {
 			//undo enPassant
-			Color c = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
-			grid[current.from.x][current.to.y] = Piece(c, PieceType::PAWN, true); //it has moved
+			grid[current.from.x][current.to.y] = Piece(whoseTurnIsIt, PieceType::PAWN, true); //it has moved
+			reversedPassant = true; 
 		}
 		
+	} else if (current.promotion) {
+		nextPromotion = grid[current.from.x][current.from.y].type;
+		grid[current.from.x][current.from.y].type = PieceType::PAWN;
 	}
 
 	whoseTurnIsIt = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
 	updateMoves();
 	--turn;
+
+	if (reversedPassant) { enPassant = current.to; };
 }
 
 void ChessBoard::printBoard() const {
@@ -293,13 +316,10 @@ std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos, const bool onlyAt
 	std::set<Coord> moves;
 
 	int offset;
-	switch (grid[pos.x][pos.y].color) {
-		case Color::WHITE :
-			offset = -1;
-			break;
-		case Color::BLACK :
-			offset = 1;
-			break;
+	if (usersColor == Color::WHITE) {
+		offset = whoseTurnIsIt == Color::WHITE ? -1 : 1;
+	} else {
+		offset = whoseTurnIsIt == Color::WHITE ? 1 : -1;
 	}
 
 	if (pos.x + offset >= 0 && pos.x + offset < 8) {
@@ -506,5 +526,7 @@ std::set<Coord> ChessBoard::raycastLineAt(const Coord pos, const int xDirect, co
 		}
 	}
 
+	
+	
 	return result;
 }

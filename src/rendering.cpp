@@ -107,7 +107,7 @@ void startApp(ChessBoard* boardPtr) {
 
 	//setup robots
 	initiateRobots(board);
-	tryToMoveBot();
+	//tryToMoveBot();
 }
 
 void continueApp() {
@@ -324,7 +324,7 @@ void releasePiece() {
 
 			board->movePiece(selectedSquare, promotionSquare);
 			updateBoard();
-			tryToMoveBot();
+			if (!board->getIfMated()) { tryToMoveBot(); }
 
 			promotionSquare = {8, 8};
 		}
@@ -340,7 +340,7 @@ void releasePiece() {
 				} else {
 					board->movePiece(selectedSquare, coord);
 					updateBoard();	
-					tryToMoveBot();
+					if (!board->getIfMated()) { tryToMoveBot(); }
 				}
 			}
 		} else {
@@ -379,7 +379,7 @@ void updateBoard() {
 }
 
 void tryToMoveBot() {
-	if (board->getWhoseTurnIsIt() != board->getUsersColor()) {
+	if (!board->getIfMated() && !board->getIfStalemated() && board->getWhoseTurnIsIt() != board->getUsersColor()) {
 		randomRobot();
 	}
 	updateBoard();

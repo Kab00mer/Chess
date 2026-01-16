@@ -70,7 +70,7 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 		currentMove.from = pos1;
 		currentMove.to = pos2;
 
-		if (!grid[pos1.x][pos2.y].hasMoved) {
+		if (!grid[pos1.x][pos1.y].hasMoved) {
 			grid[pos1.x][pos1.y].hasMoved = true;
 			currentMove.firstTimePieceMoved = true;
 		}
@@ -81,6 +81,7 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 
 		if (grid[pos2.x][pos2.y].type == PieceType::PAWN) {
 			if (pos2.x == 0 || pos2.x == 7) {
+				//promotion
 				if (nextPromotion == PieceType::NONE) {
 					std::cout << "ERROR: No piece type was set for the next pawn promotion!" << '\n';
 				} else {
@@ -88,21 +89,24 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 					grid[pos2.x][pos2.y].type = nextPromotion;
 					nextPromotion = PieceType::NONE;
 				}
-				enPassant = emptyCoord;
 
-			} else if (enPassant.x != 8 && pos2 == enPassant) {
+			} else if (!enPassantStack.empty() && pos2 == enPassantStack.top()) {
+				//enPassant was executed
 				currentMove.passantOrCastle = true;
 				grid[pos1.x][pos2.y] = emptyPiece;
-			} else if (pos2.x - pos1.x == 2) {
-				enPassant = Coord(pos1.x + 1, pos1.y);
-			} else if (pos2.x - pos1.x == -2) {
-				enPassant = Coord(pos1.x - 1, pos1.y);
+			}
+
+			if (pos1.x - pos2.x == 2 || pos2.x - pos1.x == 2) {
+				//we add to enPassantStack
+				Coord enPassant((pos1.x + pos2.x) / 2, pos1.y);
+				enPassantStack.push(enPassant);
+
 			} else {
-				enPassant = emptyCoord;
+				enPassantStack.push(emptyCoord);
 			}
 
 		} else {
-			enPassant = emptyCoord;
+			enPassantStack.push(emptyCoord);
 		}
 
 		if (grid[pos2.x][pos2.y].type == PieceType::KING) {
@@ -136,13 +140,13 @@ void ChessBoard::undoMove() {
 
 	Move current = moveStack.top();
 	moveStack.pop();
+	enPassantStack.pop();
 
 	grid[current.from.x][current.from.y] = grid[current.to.x][current.to.y];
 	grid[current.to.x][current.to.y] = current.pieceToUndo;
 
 	grid[current.from.x][current.from.y].hasMoved = !current.firstTimePieceMoved;
 
-	bool reversedPassant = false;
 	if (current.passantOrCastle) {
 		if (grid[current.from.x][current.from.y].type == PieceType::KING) {
 			//undo castling
@@ -156,7 +160,6 @@ void ChessBoard::undoMove() {
 		} else {
 			//undo enPassant
 			grid[current.from.x][current.to.y] = Piece(whoseTurnIsIt, PieceType::PAWN, true); //it has moved
-			reversedPassant = true; 
 		}
 		
 	} else if (current.promotion) {
@@ -167,11 +170,13 @@ void ChessBoard::undoMove() {
 	whoseTurnIsIt = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
 	updateMoves();
 	--turn;
-
-	if (reversedPassant) { enPassant = current.to; };
 }
 
 void ChessBoard::printBoard() const {
+	Coord enPassant = enPassantStack.empty() ? emptyCoord : enPassantStack.top();
+	std::cout << "enPassant " << enPassant.x << " : " << enPassant.y << '\n';
+	std::cout << "inCheck " << inCheck;
+
 	std::cout << '\n' << "=============" << " Turn " << turn << " =============" << '\n';
 	for (int i = 0; i < 8; ++i) {
 		std::cout << "| ";
@@ -247,22 +252,17 @@ bool ChessBoard::calculateInCheck() {
 	int i = 0;
 	int j = 0;
 	while (!found && i < 8) {
-		j = 0;
 		while (!found && j < 8) {
-			if (grid[i][j].color == whoseTurnIsIt && grid[i][j].type == PieceType::KING) {
-				found = true;
-			} else { 
-				++j;
-			}
+			(grid[i][j].color == whoseTurnIsIt && grid[i][j].type == PieceType::KING) ? found = true : ++j;
 		}
 		
-		if (!found) { ++i; }
+		if (!found) { ++i; j = 0; }
 	}
 
-	Coord king = {i, j};
-	if (king.x == 8) {
+	if (!found) {
 		std::cout << "ERROR: King was not found when calculating for check" << '\n';
 	} else {
+		Coord king = {i, j};
 		for (int i = 0; i < 8; ++i) {
 			for (int j = 0; j < 8; ++j) {
 				if (grid[i][j].type != PieceType::NONE && grid[i][j].color != whoseTurnIsIt) {
@@ -317,9 +317,9 @@ std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos, const bool onlyAt
 
 	int offset;
 	if (usersColor == Color::WHITE) {
-		offset = whoseTurnIsIt == Color::WHITE ? -1 : 1;
+		offset = grid[pos.x][pos.y].color == Color::WHITE ? -1 : 1;
 	} else {
-		offset = whoseTurnIsIt == Color::WHITE ? 1 : -1;
+		offset = grid[pos.x][pos.y].color == Color::WHITE ? 1 : -1;
 	}
 
 	if (pos.x + offset >= 0 && pos.x + offset < 8) {
@@ -335,12 +335,13 @@ std::set<Coord> ChessBoard::possiblePawnMoves(const Coord pos, const bool onlyAt
 		//pawn diagonals
 		for (int i = -1; i <= 1; i += 2) {
 			if (pos.y + i >= 0 && pos.y + i < 8) {
+				Coord enPassant = enPassantStack.empty() ? emptyCoord : enPassantStack.top();
 				if (grid[pos.x + offset][pos.y + i].type != PieceType::NONE 
 						&& grid[pos.x + offset][pos.y + i].color != grid[pos.x][pos.y].color) {
+					//normal attack
 					moves.insert( {pos.x + offset, pos.y + i} );
-					//std::cout << "DAIGONLA PAWN!!!" << '\n';
 				} else if (pos.x + offset == enPassant.x && pos.y + i == enPassant.y) {
-					//std::cout << "EN PASSANT!!!" << '\n';
+					//enPassant
 					moves.insert( {pos.x + offset, pos.y + i} );
 				}
 			}
@@ -470,7 +471,6 @@ std::set<Coord> ChessBoard::possibleKingMoves(const Coord pos, const bool onlyAt
 		if (!grid[pos.x][pos.y].hasMoved && !grid[pos.x][0].hasMoved && !inCheck 
 				&& pos.y - 1 >= 0 && grid[pos.x][pos.y - 1].type == PieceType::NONE 
 				&& pos.y - 2 >= 0 && grid[pos.x][pos.y - 2].type == PieceType::NONE 
-				&& pos.y - 3 >= 0 && grid[pos.x][pos.y - 3].type == PieceType::NONE
 				&& grid[pos.x][0].type == PieceType::ROOK) {
 
 			Piece king = grid[pos.x][pos.y];
@@ -525,8 +525,6 @@ std::set<Coord> ChessBoard::raycastLineAt(const Coord pos, const int xDirect, co
 			collision = true;
 		}
 	}
-
-	
 	
 	return result;
 }

@@ -1,10 +1,12 @@
 #include "robots.h"
 #include <set>
 #include <random>
+#include <ctime>
 
 static ChessBoard* board;
 
 void initiateRobots(ChessBoard* newBoard) {
+
 	board = newBoard;
 }
 
@@ -21,6 +23,8 @@ void randomRobot() {
 		}
 	}
 
+
+	srand(time(NULL));
 	int randomNumber = std::rand() % possibleMoves.size();
 	auto iter = possibleMoves.begin();
 	std:advance(iter, randomNumber);

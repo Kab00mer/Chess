@@ -101,10 +101,10 @@ class ChessBoard {
 		std::set<std::pair<Coord, Coord>> availableMoves;
 		Color usersColor;
 		Color whoseTurnIsIt;
-		Coord enPassant;
 		bool inCheck;
 		PieceType nextPromotion;
 		std::stack<Move> moveStack;
+		std::stack<Coord> enPassantStack;
 };
 
 #endif

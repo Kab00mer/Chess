@@ -3,6 +3,8 @@
 #include "SDL3/SDL.h"
 #include <iostream>
 #include <map>
+#include <chrono>
+#include <thread>
 
 const int WINDOW_WIDTH = 850;
 const int WINDOW_HEIGHT = 850;
@@ -32,6 +34,7 @@ static Piece promotionPieces[] = {
 	Piece(Color::NONE, PieceType::ROOK), 
 	Piece(Color::NONE, PieceType::QUEEN)
 };
+static bool robotPause = false;
 
 void startApp(ChessBoard* boardPtr) {
 	board = boardPtr;
@@ -107,6 +110,7 @@ void startApp(ChessBoard* boardPtr) {
 
 	//setup robots
 	initiateRobots(board);
+	robotPause = true;
 	//tryToMoveBot();
 }
 
@@ -125,26 +129,24 @@ void continueApp() {
 			if (i % 8 == 7) { ++j; }
 		}
 
+		//drawing tiles of previous move
+		SDL_SetRenderDrawColor(renderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
+		Move previous = board->getMostRecentMove();
+		if (previous.from.x != 8) {
+			drawHighlightAt(previous.from.x, previous.from.y);
+			drawHighlightAt(previous.to.x, previous.to.y);
+		}
+
 		//drawing tile of selected piece
 		SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
 		if (selectedSquare.x != 8) {
-			SDL_FRect r;
-			r.x = rects[selectedSquare.x][selectedSquare.y].x + SQUARE_SIZE / 6;
-			r.y = rects[selectedSquare.x][selectedSquare.y].y + SQUARE_SIZE / 6;
-			r.w = SQUARE_SIZE / 1.5;
-			r.h = SQUARE_SIZE / 1.5;
-			SDL_RenderFillRect(renderer, &r);
+			drawHighlightAt(selectedSquare.x, selectedSquare.y);
 		}
 
 		//drawing tiles of moves piece can take
 		SDL_SetRenderDrawColor(renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
 		for (Coord square : possibleMoves) {
-			SDL_FRect r;
-			r.x = rects[square.x][square.y].x + SQUARE_SIZE / 6;
-			r.y = rects[square.x][square.y].y + SQUARE_SIZE / 6;
-			r.w = SQUARE_SIZE / 1.5;
-			r.h = SQUARE_SIZE / 1.5;
-			SDL_RenderFillRect(renderer, &r);
+			drawHighlightAt(square.x, square.y);
 		}
 
 		//drawing tile if king is in check
@@ -166,12 +168,7 @@ void continueApp() {
 				if (!found) { ++i; }
 			}
 
-			SDL_FRect r;
-			r.x = rects[i][j].x + SQUARE_SIZE / 6;
-			r.y = rects[i][j].y + SQUARE_SIZE / 6;
-			r.w = SQUARE_SIZE / 1.5;
-			r.h = SQUARE_SIZE / 1.5;
-			SDL_RenderFillRect(renderer, &r);
+			drawHighlightAt(i, j);
 		}
 
 		//go through all of the board's squares and draw pieces
@@ -202,6 +199,7 @@ void continueApp() {
 		}
 
 	} else {
+		//draw promotion screen
 		SDL_SetRenderDrawColor(renderer, 200, 200, 200, SDL_ALPHA_OPAQUE);
 		Color current = board->getWhoseTurnIsIt();
 		int counter = 0;
@@ -216,6 +214,13 @@ void continueApp() {
 	}
 
 	SDL_RenderPresent(renderer);
+	
+	//This is if I want there to be a delay for bot moves
+	if (robotPause) { 
+		//robotPause = false;
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		tryToMoveBot(); 
+	}
 }
 
 void stopApp() {
@@ -224,6 +229,15 @@ void stopApp() {
 	for (auto texture : textures) {
 			
 	}
+}
+
+void drawHighlightAt(const int x, const int y) {
+	SDL_FRect r;
+	r.x = rects[x][y].x + SQUARE_SIZE / 6;
+	r.y = rects[x][y].y + SQUARE_SIZE / 6;
+	r.w = SQUARE_SIZE / 1.5;
+	r.h = SQUARE_SIZE / 1.5;
+	SDL_RenderFillRect(renderer, &r);
 }
 
 std::string convertPieceToStr(const Piece piece) {
@@ -324,7 +338,8 @@ void releasePiece() {
 
 			board->movePiece(selectedSquare, promotionSquare);
 			updateBoard();
-			if (!board->getIfMated()) { tryToMoveBot(); }
+			if (!board->getIfMated()) { robotPause = true; }
+			//if (!board->getIfMated()) { tryToMoveBot(); }
 
 			promotionSquare = {8, 8};
 		}
@@ -340,7 +355,8 @@ void releasePiece() {
 				} else {
 					board->movePiece(selectedSquare, coord);
 					updateBoard();	
-					if (!board->getIfMated()) { tryToMoveBot(); }
+					if (!board->getIfMated()) { robotPause = true; }
+					//if (!board->getIfMated()) { tryToMoveBot(); }
 				}
 			}
 		} else {
@@ -376,11 +392,18 @@ void updateBoard() {
 
 	possibleMoves.clear();
 	selectedSquare = {8, 8};
+	//tryToMoveBot();
 }
 
 void tryToMoveBot() {
-	if (!board->getIfMated() && !board->getIfStalemated() && board->getWhoseTurnIsIt() != board->getUsersColor()) {
+	
+	/*
+	if (!board->getIfMated() && !board->getIfStalemated()
+	 && board->getUsersColor() != board->getWhoseTurnIsIt()) {
 		randomRobot();
 	}
+	*/
+	if (!board->getIfMated() && !board->getIfStalemated()) { randomRobot(); }
+
 	updateBoard();
 }

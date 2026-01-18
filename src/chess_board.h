@@ -72,6 +72,7 @@ class ChessBoard {
 		bool getIfInCheck() const;
 		bool getIfMated() const;
 		bool getIfStalemated() const;
+		Move getMostRecentMove() const;
 
 		//moving
 		void movePiece(const Coord, const Coord);

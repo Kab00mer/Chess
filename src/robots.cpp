@@ -5,15 +5,16 @@
 
 static ChessBoard* board;
 
-void initiateRobots(ChessBoard* newBoard) {
-
-	board = newBoard;
+void initiateRobots(ChessBoard* newBoard) { 
+	board = newBoard; 
+	srand(time(NULL));
 }
 
 void randomRobot() {
 	std::set<std::pair<Coord, Coord>> possibleMoves;
 	board->setNextPawnPromotion(PieceType::QUEEN);
 
+	//getting all possible moves
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
 			Coord from = {i, j};
@@ -23,8 +24,7 @@ void randomRobot() {
 		}
 	}
 
-
-	srand(time(NULL));
+	//rng and pulling raffled move
 	int randomNumber = std::rand() % possibleMoves.size();
 	auto iter = possibleMoves.begin();
 	std:advance(iter, randomNumber);

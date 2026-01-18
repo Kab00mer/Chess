@@ -9,6 +9,9 @@ void startApp(ChessBoard*);
 void continueApp();
 void stopApp();
 
+//drawing
+void drawHighlightAt(const int x, const int y);
+
 //collecting mouse and piece data
 std::string convertPieceToStr(const Piece);
 void setCurrentMousePos(const float, const float);

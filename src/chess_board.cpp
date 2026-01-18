@@ -63,6 +63,7 @@ void ChessBoard::setNextPawnPromotion(const PieceType type) { nextPromotion = ty
 bool ChessBoard::getIfInCheck() const { return inCheck; }
 bool ChessBoard::getIfMated() const { return (availableMoves.size() == 0 && inCheck); }
 bool ChessBoard::getIfStalemated() const { return (availableMoves.size() == 0 && !inCheck); }
+Move ChessBoard::getMostRecentMove() const { return !moveStack.empty() ? moveStack.top() : Move(); }
 
 void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 	if (grid[pos1.x][pos1.y].type != PieceType::NONE) {
@@ -174,8 +175,6 @@ void ChessBoard::undoMove() {
 
 void ChessBoard::printBoard() const {
 	Coord enPassant = enPassantStack.empty() ? emptyCoord : enPassantStack.top();
-	std::cout << "enPassant " << enPassant.x << " : " << enPassant.y << '\n';
-	std::cout << "inCheck " << inCheck;
 
 	std::cout << '\n' << "=============" << " Turn " << turn << " =============" << '\n';
 	for (int i = 0; i < 8; ++i) {

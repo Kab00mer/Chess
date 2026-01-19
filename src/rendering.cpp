@@ -35,6 +35,7 @@ static Piece promotionPieces[] = {
 	Piece(Color::NONE, PieceType::QUEEN)
 };
 static bool robotPause = false;
+static bool finished = false;
 
 void startApp(ChessBoard* boardPtr) {
 	board = boardPtr;
@@ -216,9 +217,9 @@ void continueApp() {
 	SDL_RenderPresent(renderer);
 	
 	//This is if I want there to be a delay for bot moves
-	if (robotPause) { 
+	if (robotPause && !finished) { 
 		//robotPause = false;
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+		std::this_thread::sleep_for(std::chrono::seconds(0));
 		tryToMoveBot(); 
 	}
 }
@@ -377,11 +378,14 @@ void updateBoard() {
 	board->printBoard();
 
 	if (board->getIfMated()) {
-		Color loser = board->getWhoseTurnIsIt();
-		loser == Color::WHITE ? std::cout << "BLACK" : std::cout << "WHITE";
-		std::cout << " WON !!!!!!" << '\n';
-	} else if (board->getIfStalemated()) {
-		std::cout << "IT IS A DRAW!!!!!!" << "\n";
+		std::cout << "CHECKMATE" << '\n';
+		board->getWhoseTurnIsIt() == Color::WHITE ? std::cout << "BLACK" : std::cout << "WHITE";
+		std::cout << " HAS WON!!!" << '\n';
+		finished = true;
+
+	} else if (board->getIfDraw().first) {
+		std::cout << board->getIfDraw().second << '\n' << "GAME IS A DRAW!!!" << '\n';
+		finished = true;
 	}
 
 	for (int i = 0; i < RANK; ++i) {
@@ -396,14 +400,6 @@ void updateBoard() {
 }
 
 void tryToMoveBot() {
-	
-	/*
-	if (!board->getIfMated() && !board->getIfStalemated()
-	 && board->getUsersColor() != board->getWhoseTurnIsIt()) {
-		randomRobot();
-	}
-	*/
-	if (!board->getIfMated() && !board->getIfStalemated()) { randomRobot(); }
-
+	if (!finished) { randomRobot(); }
 	updateBoard();
 }

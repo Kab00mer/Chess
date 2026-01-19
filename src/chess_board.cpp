@@ -6,6 +6,7 @@ static const Piece emptyPiece = Piece(Color::NONE, PieceType::NONE);
 
 ChessBoard::ChessBoard(Color color) {
 	turn = 0;
+	fiftyMoveRule = 0;
 	whoseTurnIsIt = Color::WHITE;
 	usersColor = color;
 	nextPromotion = PieceType::NONE;
@@ -61,9 +62,57 @@ Color ChessBoard::getUsersColor() const { return usersColor; }
 Color ChessBoard::getWhoseTurnIsIt() const { return whoseTurnIsIt; }
 void ChessBoard::setNextPawnPromotion(const PieceType type) { nextPromotion = type; }
 bool ChessBoard::getIfInCheck() const { return inCheck; }
-bool ChessBoard::getIfMated() const { return (availableMoves.size() == 0 && inCheck); }
-bool ChessBoard::getIfStalemated() const { return (availableMoves.size() == 0 && !inCheck); }
 Move ChessBoard::getMostRecentMove() const { return !moveStack.empty() ? moveStack.top() : Move(); }
+
+bool ChessBoard::getIfMated() const { 
+	return (availableMoves.size() == 0 && inCheck);
+}
+
+std::pair<bool, std::string> ChessBoard::getIfDraw() const { 
+	if (availableMoves.size() == 0 && !inCheck) {
+		return {true, "STALEMATE"};
+
+	} else if (fiftyMoveRule >= 50) {
+		return {true, "FIFTY MOVE RULE"};
+
+	//} else if () {
+		//put here threefold repetition	
+	//	return {true, "THREEFOLD REPETITION"};
+	} else {
+		//check for insufficient material
+		int knights = 0;
+		int bishops = 0;
+		int nonKings = 0;
+		int i = 0;
+		int j = 0;
+		while (knights < 2 && bishops < 2 && nonKings < 1 && i < 8) {
+			j = 0;
+			while (knights < 2 && bishops < 2 && nonKings < 1 && j < 8) {
+				switch (grid[i][j].type) {
+					case PieceType::KING :
+					case PieceType::NONE :
+						break;
+					case PieceType::KNIGHT :
+						++knights;
+						break;
+					case PieceType::BISHOP :
+						++bishops;
+						break;
+					default :
+						++nonKings;
+				}
+				++j;
+			}
+			++i;
+		}
+
+		if (knights < 2 && bishops < 2 && nonKings < 1) {
+			return {true, "INSUFFICENT MATERIAL"};
+		}
+	}
+
+	return {false, ""};
+}
 
 void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 	if (grid[pos1.x][pos1.y].type != PieceType::NONE) {
@@ -79,6 +128,8 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 		currentMove.pieceToUndo = grid[pos2.x][pos2.y];	
 		grid[pos2.x][pos2.y] = grid[pos1.x][pos1.y];
 		grid[pos1.x][pos1.y] = emptyPiece;
+
+		currentMove.pieceToUndo.type == PieceType::NONE ? ++fiftyMoveRule : fiftyMoveRule = 0;
 
 		if (grid[pos2.x][pos2.y].type == PieceType::PAWN) {
 			if (pos2.x == 0 || pos2.x == 7) {
@@ -224,6 +275,8 @@ void ChessBoard::printBoard() const {
 void ChessBoard::updateMoves() {
 	inCheck = calculateInCheck();
 	availableMoves.clear();
+
+	if (inCheck) { fiftyMoveRule = 0; }
 
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {

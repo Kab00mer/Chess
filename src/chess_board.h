@@ -3,6 +3,7 @@
 
 #include <set>
 #include <stack>
+#include <string>
 
 enum class Color {
 	WHITE,
@@ -70,9 +71,9 @@ class ChessBoard {
 		Color getWhoseTurnIsIt() const;
 		void setNextPawnPromotion(const PieceType);
 		bool getIfInCheck() const;
-		bool getIfMated() const;
-		bool getIfStalemated() const;
 		Move getMostRecentMove() const;
+		bool getIfMated() const;
+		std::pair<bool, std::string> getIfDraw() const;
 
 		//moving
 		void movePiece(const Coord, const Coord);
@@ -106,6 +107,9 @@ class ChessBoard {
 		PieceType nextPromotion;
 		std::stack<Move> moveStack;
 		std::stack<Coord> enPassantStack;
+		int fiftyMoveRule;
+		std::set threeFold;
 };
+
 
 #endif

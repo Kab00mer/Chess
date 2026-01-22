@@ -5,5 +5,6 @@
 
 void initiateRobots(ChessBoard*);
 void randomRobot();
+void pointRobot();
 
 #endif

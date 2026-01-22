@@ -67,6 +67,7 @@ class ChessBoard {
 		//getters and setters
 		Piece getPieceAt(const Coord) const;
 		std::set<Coord> getMovesForPieceAt(const Coord) const;
+		std::set<std::pair<Coord, Coord>> getAllPossibleMoves() const;
 		Color getUsersColor() const;
 		Color getWhoseTurnIsIt() const;
 		void setNextPawnPromotion(const PieceType);
@@ -74,9 +75,10 @@ class ChessBoard {
 		Move getMostRecentMove() const;
 		bool getIfMated() const;
 		std::pair<bool, std::string> getIfDraw() const;
+		int getPointsOf(const Color) const;
 
 		//moving
-		void movePiece(const Coord, const Coord);
+		void movePiece(const Coord, const Coord, const bool);
 		void undoMove();
 
 		//printing board
@@ -84,8 +86,9 @@ class ChessBoard {
 
 	private :
 		//board logic
-		void updateMoves();
+		void updateMoves(const bool);
 		bool calculateInCheck();
+		void updatePoints();
 
 		//Piece logic for possible moves
 		std::set<Coord> getPossibleMovesAt(const Coord, const bool);
@@ -108,7 +111,9 @@ class ChessBoard {
 		std::stack<Move> moveStack;
 		std::stack<Coord> enPassantStack;
 		int fiftyMoveRule;
-		std::set threeFold;
+		//std::set< threeFold;
+		int whitesPoints;
+		int blacksPoints;
 };
 
 

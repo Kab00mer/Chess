@@ -111,7 +111,7 @@ void startApp(ChessBoard* boardPtr) {
 
 	//setup robots
 	initiateRobots(board);
-	robotPause = true;
+	//robotPause = true;
 	//tryToMoveBot();
 }
 
@@ -218,7 +218,7 @@ void continueApp() {
 	
 	//This is if I want there to be a delay for bot moves
 	if (robotPause && !finished) { 
-		//robotPause = false;
+		robotPause = false;
 		std::this_thread::sleep_for(std::chrono::seconds(0));
 		tryToMoveBot(); 
 	}
@@ -337,10 +337,9 @@ void releasePiece() {
 			board->setNextPawnPromotion(promotionPieces[counter].type);
 			promotionScreen = false;
 
-			board->movePiece(selectedSquare, promotionSquare);
+			board->movePiece(selectedSquare, promotionSquare, false);
 			updateBoard();
 			if (!board->getIfMated()) { robotPause = true; }
-			//if (!board->getIfMated()) { tryToMoveBot(); }
 
 			promotionSquare = {8, 8};
 		}
@@ -354,10 +353,9 @@ void releasePiece() {
 					promotionScreen = true;
 					promotionSquare = coord;
 				} else {
-					board->movePiece(selectedSquare, coord);
+					board->movePiece(selectedSquare, coord, false);
 					updateBoard();	
 					if (!board->getIfMated()) { robotPause = true; }
-					//if (!board->getIfMated()) { tryToMoveBot(); }
 				}
 			}
 		} else {
@@ -400,6 +398,9 @@ void updateBoard() {
 }
 
 void tryToMoveBot() {
-	if (!finished) { randomRobot(); }
+	if (!finished) { 
+		//randomRobot(); 
+		pointRobot();
+	}
 	updateBoard();
 }

@@ -7,6 +7,8 @@ static const Piece emptyPiece = Piece(Color::NONE, PieceType::NONE);
 ChessBoard::ChessBoard(Color color) {
 	turn = 0;
 	fiftyMoveRule = 0;
+	whitesPoints = 0;
+	blacksPoints = 0;
 	whoseTurnIsIt = Color::WHITE;
 	usersColor = color;
 	nextPromotion = PieceType::NONE;
@@ -43,7 +45,7 @@ ChessBoard::ChessBoard(Color color) {
 	grid[0][4] = Piece(opponent, PieceType::KING);
 	grid[7][4] = Piece(usersColor, PieceType::KING);
 	
-	updateMoves();
+	updateMoves(false);
 }
 
 Piece ChessBoard::getPieceAt(const Coord pos) const { return grid[pos.x][pos.y]; }
@@ -58,6 +60,7 @@ std::set<Coord> ChessBoard::getMovesForPieceAt(const Coord pos) const {
 	return foundMoves;
 }
 
+std::set<std::pair<Coord, Coord>> ChessBoard::getAllPossibleMoves() const { return availableMoves; }
 Color ChessBoard::getUsersColor() const { return usersColor; }
 Color ChessBoard::getWhoseTurnIsIt() const { return whoseTurnIsIt; }
 void ChessBoard::setNextPawnPromotion(const PieceType type) { nextPromotion = type; }
@@ -114,7 +117,11 @@ std::pair<bool, std::string> ChessBoard::getIfDraw() const {
 	return {false, ""};
 }
 
-void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
+int ChessBoard::getPointsOf(const Color c) const {
+ 	return c == Color::WHITE ? whitesPoints - blacksPoints : blacksPoints - whitesPoints;
+}
+
+void ChessBoard::movePiece(const Coord pos1, const Coord pos2, const bool ignoreFiftyRule) {
 	if (grid[pos1.x][pos1.y].type != PieceType::NONE) {
 		Move currentMove;
 		currentMove.from = pos1;
@@ -129,7 +136,9 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 		grid[pos2.x][pos2.y] = grid[pos1.x][pos1.y];
 		grid[pos1.x][pos1.y] = emptyPiece;
 
-		currentMove.pieceToUndo.type == PieceType::NONE ? ++fiftyMoveRule : fiftyMoveRule = 0;
+		if (!ignoreFiftyRule) {
+			currentMove.pieceToUndo.type == PieceType::NONE ? ++fiftyMoveRule : fiftyMoveRule = 0;
+		}
 
 		if (grid[pos2.x][pos2.y].type == PieceType::PAWN) {
 			if (pos2.x == 0 || pos2.x == 7) {
@@ -176,7 +185,8 @@ void ChessBoard::movePiece(const Coord pos1, const Coord pos2) {
 		moveStack.push(currentMove);
 
 		whoseTurnIsIt = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
-		updateMoves();
+		updateMoves(false);
+		updatePoints();
 		++turn;
 
 	} else {
@@ -220,7 +230,7 @@ void ChessBoard::undoMove() {
 	}
 
 	whoseTurnIsIt = (whoseTurnIsIt == Color::WHITE) ? Color::BLACK : Color::WHITE;
-	updateMoves();
+	updateMoves(false);
 	--turn;
 }
 
@@ -272,11 +282,11 @@ void ChessBoard::printBoard() const {
 	std::cout << '\n';
 }
 
-void ChessBoard::updateMoves() {
+void ChessBoard::updateMoves(const bool ignoreFiftyRule) {
 	inCheck = calculateInCheck();
 	availableMoves.clear();
 
-	if (inCheck) { fiftyMoveRule = 0; }
+	if (!ignoreFiftyRule && inCheck) { fiftyMoveRule = 0; }
 
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
@@ -330,6 +340,36 @@ bool ChessBoard::calculateInCheck() {
 	}
 	
 	return false;
+}
+
+void ChessBoard::updatePoints() {
+	whitesPoints = 0;
+	blacksPoints = 0;
+
+	for (int i = 0; i < 8; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			int amount = 0;
+			switch(grid[i][j].type) {
+				case PieceType::PAWN :
+					++amount;
+					break;
+				case PieceType::BISHOP :
+				case PieceType::KNIGHT :
+					amount += 3;
+					break;
+				case PieceType::ROOK :
+					amount += 5;
+					break;
+				case PieceType::QUEEN :
+					amount += 9;
+					break;
+				default:
+					break;
+			}
+
+			grid[i][j].color == Color::WHITE ? whitesPoints += amount : blacksPoints += amount;
+		}
+	}
 }
 
 std::set<Coord> ChessBoard::getPossibleMovesAt(const Coord pos, const bool onlyAttackMoves) {

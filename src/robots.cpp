@@ -2,9 +2,10 @@
 #include <set>
 #include <random>
 #include <ctime>
-#include <queue>
+#include <stack>
 #include <vector>
 #include <iostream>
+#include <limits>
 
 static ChessBoard* board;
 
@@ -35,53 +36,55 @@ void randomRobot() {
 	board->movePiece(chosen.first, chosen.second, false);
 }
 
-void pointRobot() {
-	std::queue<std::vector<std::pair<Coord, Coord>>> queuedMoves;	
-	int maxDepth = 1;
-
-	//getting all initial possible moves
-	for (std::pair<Coord, Coord> move : board->getAllPossibleMoves()) {
-		std::vector<std::pair<Coord, Coord>> initialMove = {move};
-		queuedMoves.push(initialMove);
+void pointRobot(const int moveDepth) {
+	if (moveDepth < 1) {
+		std::cerr << "ERROR: Please insert a positive integer to pointRobot(int)!" << '\n';
 	}
 
-	std::pair<Coord, Coord> selectedMove = queuedMoves.front()[0];
-
-	while (!queuedMoves.empty()) {
-		std::vector<std::pair<Coord, Coord>> currentBranch = queuedMoves.front();
-		queuedMoves.pop();
-		std::cout << "(" << currentBranch[0].first.x << ", " << currentBranch[0].first.y << ") (" 
-			<< currentBranch[0].second.x << ", " << currentBranch[0].second.y << ")\n";
-	}
-
+	std::set<std::pair<int, std::pair<Coord, Coord>>> movesAndPoints;
 	Color robotColor = board->getWhoseTurnIsIt();
-	int maxPoints = board->getPointsOf(robotColor);
-	
-	while (!queuedMoves.empty()) { 
-		std::vector<std::pair<Coord, Coord>> currentBranch = queuedMoves.front();
-		queuedMoves.pop();
-		size_t moveDepth = currentBranch.size();
+	for (std::pair<Coord, Coord> move : board->getAllPossibleMoves()) {
+		//force each possible move, and calculate game trees for each
+		board->movePiece(move.first, move.second, true);
+		movesAndPoints.insert(std::make_pair(pointDepthFirstSearch(moveDepth * 2, 1, robotColor), move));
+		board->undoMove();
+	}
 
-		//go down move tree
-		for (int i = 0; i < moveDepth; ++i) {
-			board->movePiece(currentBranch[i].first, currentBranch[i].second, true);
-		}
-		
-		//add all of it's childen to queue if it hasn't reached maxDepth
-		if (moveDepth < maxDepth) {
-			for (std::pair<Coord, Coord> move : board->getAllPossibleMoves()) {
-				currentBranch.push_back(move);
-				queuedMoves.push(currentBranch);
-			}
-		}
-
-		//check if the current branch is our new maximum
-
-		//revert back to tree root
-		for (int i = 0; i < moveDepth; ++i) {
-			board->undoMove();
+	//now we select the move that had the highest calculated points
+	std::pair<Coord, Coord> selectedMove = movesAndPoints.begin()->second;
+	int maxPoints = std::numeric_limits<int>::lowest();
+	for (std::pair<int, std::pair<Coord, Coord>> move : movesAndPoints) {
+		//if the points are the same, randomly pick one
+		if (move.first > maxPoints || (move.first == maxPoints && std::rand() % 2 == 0)) {
+			maxPoints = move.first;
+			selectedMove = move.second;
 		}
 	}
 
 	board->movePiece(selectedMove.first, selectedMove.second, false);
+}
+
+int pointDepthFirstSearch(const int maxDepth, const int currentDepth, const Color robotColor) {
+	if (currentDepth == maxDepth) {
+		return board->getPointsOf(robotColor);
+	} else if (board->getIfMated()) {
+		return currentDepth % 2  == 0 ? 1000 : -1000;
+	}
+
+	int maxOrMin = currentDepth % 2 == 0 ? std::numeric_limits<int>::lowest() 
+		: std::numeric_limits<int>::max();
+
+	for (std::pair<Coord, Coord> move : board->getAllPossibleMoves()) {
+		board->movePiece(move.first, move.second, true);
+		int val = pointDepthFirstSearch(maxDepth, currentDepth + 1, robotColor);
+		board->undoMove();
+
+		if (currentDepth % 2 == 0) {
+			if (val > maxOrMin) { maxOrMin = val; }
+		} else {
+			if (val < maxOrMin) { maxOrMin = val; }
+		}
+	}
+
+	return maxOrMin;
 }

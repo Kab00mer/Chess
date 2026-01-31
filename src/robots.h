@@ -5,6 +5,7 @@
 
 void initiateRobots(ChessBoard*);
 void randomRobot();
-void pointRobot();
+void pointRobot(const int);
+int pointDepthFirstSearch(const int, const int, const Color);
 
 #endif

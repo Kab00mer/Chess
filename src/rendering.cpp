@@ -400,7 +400,7 @@ void updateBoard() {
 void tryToMoveBot() {
 	if (!finished) { 
 		//randomRobot(); 
-		pointRobot();
+		pointRobot(1);
 	}
 	updateBoard();
 }

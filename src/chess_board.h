@@ -76,6 +76,7 @@ class ChessBoard {
 		bool getIfMated() const;
 		std::pair<bool, std::string> getIfDraw() const;
 		int getPointsOf(const Color) const;
+		Coord getKingOf(const Color) const;
 
 		//moving
 		void movePiece(const Coord, const Coord, const bool);

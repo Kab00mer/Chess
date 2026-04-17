@@ -66,10 +66,7 @@ Color ChessBoard::getWhoseTurnIsIt() const { return whoseTurnIsIt; }
 void ChessBoard::setNextPawnPromotion(const PieceType type) { nextPromotion = type; }
 bool ChessBoard::getIfInCheck() const { return inCheck; }
 Move ChessBoard::getMostRecentMove() const { return !moveStack.empty() ? moveStack.top() : Move(); }
-
-bool ChessBoard::getIfMated() const { 
-	return (availableMoves.size() == 0 && inCheck);
-}
+bool ChessBoard::getIfMated() const { return (availableMoves.size() == 0 && inCheck); }
 
 std::pair<bool, std::string> ChessBoard::getIfDraw() const { 
 	if (availableMoves.size() == 0 && !inCheck) {
@@ -119,6 +116,27 @@ std::pair<bool, std::string> ChessBoard::getIfDraw() const {
 
 int ChessBoard::getPointsOf(const Color c) const {
  	return c == Color::WHITE ? whitesPoints - blacksPoints : blacksPoints - whitesPoints;
+}
+
+Coord ChessBoard::getKingOf(const Color c) const {
+	bool found = false;
+	int i = 0;
+	int j = 0;
+	while (!found && i < 8) {
+		j = 0;
+		while (!found && j < 8) {
+			(grid[i][j].type == PieceType::KING && grid[i][j].color == c) ? found = true : ++j;
+		}
+
+		if (!found) {++i;}
+	}
+
+	if (!found) {
+		std::cerr << "ERROR: King was not found during a search!" << '\n';
+		return {};
+	} else {
+		return {i, j};
+	}
 }
 
 void ChessBoard::movePiece(const Coord pos1, const Coord pos2, const bool ignoreFiftyRule) {
@@ -563,6 +581,7 @@ std::set<Coord> ChessBoard::possibleKingMoves(const Coord pos, const bool onlyAt
 		if (!grid[pos.x][pos.y].hasMoved && !grid[pos.x][0].hasMoved && !inCheck 
 				&& pos.y - 1 >= 0 && grid[pos.x][pos.y - 1].type == PieceType::NONE 
 				&& pos.y - 2 >= 0 && grid[pos.x][pos.y - 2].type == PieceType::NONE 
+				&& pos.y - 3 >= 0 && grid[pos.x][pos.y - 3].type == PieceType::NONE
 				&& grid[pos.x][0].type == PieceType::ROOK) {
 
 			Piece king = grid[pos.x][pos.y];

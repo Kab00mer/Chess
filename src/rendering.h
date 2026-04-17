@@ -4,8 +4,14 @@
 #include "chess_board.h"
 #include <string>
 
+enum class GameType {
+	PlayerVersusPlayer,
+	PlayerVersusRobot,
+	RobotVersusRobot
+};
+
 //basic app functions
-void startApp(ChessBoard*);
+void startApp(ChessBoard*, GameType);
 void continueApp();
 void stopApp();
 
@@ -26,6 +32,6 @@ void keyPressed();
 void updateBoard();
 
 //robot
-void tryToMoveBot();
+void robotTurn();
 
 #endif

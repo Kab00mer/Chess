@@ -1,5 +1,4 @@
 #include "rendering.h"
-#include "robots.h"
 #include "SDL3/SDL.h"
 #include <iostream>
 #include <map>
@@ -34,10 +33,11 @@ static Piece promotionPieces[] = {
 	Piece(Color::NONE, PieceType::ROOK), 
 	Piece(Color::NONE, PieceType::QUEEN)
 };
-static bool robotPause = false;
-static bool finished = false;
+static bool moveBot = false;
+static GameType currentGame = GameType::PlayerVersusPlayer;
+static bool gameFinished = false;
 
-void startApp(ChessBoard* boardPtr) {
+void startApp(ChessBoard* boardPtr, GameType game) {
 	board = boardPtr;
 	SDL_CreateWindowAndRenderer("Chess", WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
 	
@@ -109,10 +109,18 @@ void startApp(ChessBoard* boardPtr) {
 		promotionRects[i] = rects[3][2 + i];
 	}
 
-	//setup robots
-	initiateRobots(board);
-	//robotPause = true;
-	//tryToMoveBot();
+	currentGame = game;
+	switch (game) {
+		case GameType::PlayerVersusPlayer :
+			break;
+		case GameType::PlayerVersusRobot :
+			//initialize bots
+			if (board->getUsersColor() == Color::BLACK) { moveBot = true; };
+			break;
+		case GameType::RobotVersusRobot :
+			//initialize bots
+			moveBot = true;
+	}
 }
 
 void continueApp() {
@@ -216,12 +224,17 @@ void continueApp() {
 
 	SDL_RenderPresent(renderer);
 	
+	/*
 	//This is if I want there to be a delay for bot moves
-	if (robotPause && !finished) { 
-		robotPause = false;
-		std::this_thread::sleep_for(std::chrono::seconds(0));
-		tryToMoveBot(); 
+	if (moveBot && !gameFinished) { 
+		if (currentGame == GameType::PlayerVersusRobot) { 
+			moveBot = false; 
+		} else {
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+		}
+		robotTurn(); 
 	}
+	*/
 }
 
 void stopApp() {
@@ -308,7 +321,7 @@ Coord convertMousePosToCoord() {
 }
 
 void holdPiece() {
-	if (!promotionScreen) {
+	if (!promotionScreen && currentGame != GameType::RobotVersusRobot) {
 		Coord coord = convertMousePosToCoord();
 
 		if (coord.x != 8) {
@@ -339,12 +352,12 @@ void releasePiece() {
 
 			board->movePiece(selectedSquare, promotionSquare, false);
 			updateBoard();
-			if (!board->getIfMated()) { robotPause = true; }
+			if (currentGame != GameType::PlayerVersusPlayer) { moveBot = true; }
 
 			promotionSquare = {8, 8};
 		}
 
-	} else {
+	} else if (currentGame != GameType::RobotVersusRobot) {
 		Coord coord = convertMousePosToCoord();
 		if (possibleMoves.find(coord) != possibleMoves.end() || selectedSquare == coord) {
 			if (coord.x != 8 && selectedSquare.x != 8 && selectedSquare != coord) {
@@ -355,7 +368,9 @@ void releasePiece() {
 				} else {
 					board->movePiece(selectedSquare, coord, false);
 					updateBoard();	
-					if (!board->getIfMated()) { robotPause = true; }
+					if (currentGame != GameType::PlayerVersusPlayer) { 
+						moveBot = true; 
+					}
 				}
 			}
 		} else {
@@ -379,11 +394,11 @@ void updateBoard() {
 		std::cout << "CHECKMATE" << '\n';
 		board->getWhoseTurnIsIt() == Color::WHITE ? std::cout << "BLACK" : std::cout << "WHITE";
 		std::cout << " HAS WON!!!" << '\n';
-		finished = true;
+		gameFinished = true;
 
 	} else if (board->getIfDraw().first) {
 		std::cout << board->getIfDraw().second << '\n' << "GAME IS A DRAW!!!" << '\n';
-		finished = true;
+		gameFinished = true;
 	}
 
 	for (int i = 0; i < RANK; ++i) {
@@ -394,13 +409,11 @@ void updateBoard() {
 
 	possibleMoves.clear();
 	selectedSquare = {8, 8};
-	//tryToMoveBot();
 }
 
-void tryToMoveBot() {
-	if (!finished) { 
-		//randomRobot(); 
-		pointRobot(1);
+void robotTurn() {
+	if (!gameFinished) { 
+		//in future the robot will move
 	}
 	updateBoard();
 }

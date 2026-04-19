@@ -1,13 +1,15 @@
 #include "game_window.h"
 
-GameWindow::GameWindow() {
+#include <iostream>
+
+static const size_t NUM_OF_PIECES = 12;
+
+GameWindow::GameWindow() : Window("Chess") {
 	board = new ChessBoard();
-	SDL_CreateWindowAndRenderer("Chess", windowWidth, windowHeight, 0, &window, &renderer);
 
 	std::string basePath = SDL_GetBasePath();
-	//print basePath = basePath.substr(0, basePath.length() - 6);
-	/*
 	basePath = basePath.substr(0, basePath.length() - 6);
+	std::cout << basePath << '\n';
 	const char* projectRoot = basePath.c_str();
 
 	char* bmp_paths[NUM_OF_PIECES];
@@ -32,52 +34,42 @@ GameWindow::GameWindow() {
 		surfaces[i] = surface;
 	}
 
-	//create textures from surfaces
-	textures["wp"] = SDL_CreateTextureFromSurface(renderer, surfaces[0]);
-	textures["bp"] = SDL_CreateTextureFromSurface(renderer, surfaces[1]);
-	textures["wb"] = SDL_CreateTextureFromSurface(renderer, surfaces[2]);
-	textures["bb"] = SDL_CreateTextureFromSurface(renderer, surfaces[3]);
-	textures["wn"] = SDL_CreateTextureFromSurface(renderer, surfaces[4]);
-	textures["bn"] = SDL_CreateTextureFromSurface(renderer, surfaces[5]);
-	textures["wr"] = SDL_CreateTextureFromSurface(renderer, surfaces[6]);
-	textures["br"] = SDL_CreateTextureFromSurface(renderer, surfaces[7]);
-	textures["wq"] = SDL_CreateTextureFromSurface(renderer, surfaces[8]);
-	textures["bq"] = SDL_CreateTextureFromSurface(renderer, surfaces[9]);
-	textures["wk"] = SDL_CreateTextureFromSurface(renderer, surfaces[10]);
-	textures["bk"] = SDL_CreateTextureFromSurface(renderer, surfaces[11]);
+	//create pieceTextures from surfaces
+	pieceTextures["wp"] = SDL_CreateTextureFromSurface(renderer, surfaces[0]);
+	pieceTextures["bp"] = SDL_CreateTextureFromSurface(renderer, surfaces[1]);
+	pieceTextures["wb"] = SDL_CreateTextureFromSurface(renderer, surfaces[2]);
+	pieceTextures["bb"] = SDL_CreateTextureFromSurface(renderer, surfaces[3]);
+	pieceTextures["wn"] = SDL_CreateTextureFromSurface(renderer, surfaces[4]);
+	pieceTextures["bn"] = SDL_CreateTextureFromSurface(renderer, surfaces[5]);
+	pieceTextures["wr"] = SDL_CreateTextureFromSurface(renderer, surfaces[6]);
+	pieceTextures["br"] = SDL_CreateTextureFromSurface(renderer, surfaces[7]);
+	pieceTextures["wq"] = SDL_CreateTextureFromSurface(renderer, surfaces[8]);
+	pieceTextures["bq"] = SDL_CreateTextureFromSurface(renderer, surfaces[9]);
+	pieceTextures["wk"] = SDL_CreateTextureFromSurface(renderer, surfaces[10]);
+	pieceTextures["bk"] = SDL_CreateTextureFromSurface(renderer, surfaces[11]);
 
 	//free surfaces
 	for (size_t i = 0; i < NUM_OF_PIECES; ++i) {
 		SDL_DestroySurface(surfaces[i]);
 	}
-	*/
 
 	selectedSquare = Coord();
-	mouseX = 0;
-	mouseY = 0;
 	gameFinished = false;
-	userQuit = false;
+	squareSize = 100.0f;
 }
 
-void GameWindow::gameLoop() {
-	{
-		SDL_Event event;	
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_EVENT_QUIT) {
-				userQuit = true;
-			}
-
-			if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-				//mousePressed();
-			} else if (event.type == SDL_EVENT_MOUSE_MOTION) {
-				//setCurrentMousePos(event.button.x, event.button.y);
-			} else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
-				//mouseReleased();
-			} else if (event.type == SDL_EVENT_KEY_DOWN) {
-				//maybe do something with this later
-			}
-		}
+GameWindow::~GameWindow() {
+	auto iter = pieceTextures.begin();
+	auto end = pieceTextures.end();
+	while (iter != end) {
+		SDL_DestroyTexture(pieceTextures[iter->first]);
+		++iter;
 	}
-
-	
 }
+
+void GameWindow::run() {
+	SDL_SetRenderDrawColor(renderer, SDL_rand(256), SDL_rand(256), SDL_rand(256), 200);
+	SDL_RenderClear(renderer);
+	SDL_RenderPresent(renderer);
+}
+

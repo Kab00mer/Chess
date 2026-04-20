@@ -49,6 +49,7 @@ ChessBoard::ChessBoard(Color color) {
 }
 
 Piece ChessBoard::getPieceAt(const Coord pos) const { return grid[pos.x][pos.y]; }
+PieceType ChessBoard::getPieceTypeAt(const Coord pos) const { return grid[pos.x][pos.y].type; }
 
 std::set<Coord> ChessBoard::getMovesForPieceAt(const Coord pos) const {
 	std::set<Coord> foundMoves;

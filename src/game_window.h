@@ -9,25 +9,20 @@
 
 class GameWindow : public Window {
 	public:
-		GameWindow();
-		virtual ~GameWindow();
-
+		GameWindow(const size_t width = 0, const size_t height = 0);
 		void run() override;
 
 	protected:
-		/*
-		void renderBoardAt();
-		virtual Coord convertMousePosToCoord() const;
-		std::string convertPieceToCoord() const;
-		*/
+		void renderBoardAt(const size_t, const size_t) const;
+		void renderLostPiecesOf(const Color) const;
+
+		std::map<std::pair<Color, PieceType>, SDL_Texture*> pieceTextures;
+		ChessBoard* board;
+		float squareSize;
 	
 	private:
-		ChessBoard* board;
-		std::map<std::string, SDL_Texture*> pieceTextures;
-
 		Coord selectedSquare;
 		bool gameFinished;
-		float squareSize;
 };
 
 #endif

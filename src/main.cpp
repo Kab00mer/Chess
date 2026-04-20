@@ -1,15 +1,14 @@
 #include "main_menu.h"
 #include "game_window.h"
+#include "local_game.h"
+#include "computer_game.h"
 
 #include <memory>
-#include <iostream>
 
 int main(int argc, char* argv[]) {
+	std::unique_ptr<MainMenu> mainMenu = std::make_unique<MainMenu>();
 	std::unique_ptr<GameWindow> currentGame = nullptr;
-//	std::unique_ptr<MainMenu> mainMenu = std::make_unique<MainMenu>();
-	currentGame = std::make_unique<GameWindow>();
 
-	/*
 	bool running = true;
 	while (running) {
 		if (currentGame) {
@@ -30,12 +29,12 @@ int main(int argc, char* argv[]) {
 			GameType selectedGame = mainMenu->userSelectedGame();
 			switch (selectedGame) {
 				case GameType::Local:
-					currentGame = std::make_unique<GameWindow>();
+					currentGame = std::make_unique<LocalGame>();
 					mainMenu = nullptr;
 					break;
 				case GameType::Computer:
-					//currentGame = std::make_unique<LocalGame>();
-					//mainMenu = nullptr;
+					currentGame = std::make_unique<ComputerGame>();
+					mainMenu = nullptr;
 					break;
 				case GameType::Online:
 					//currentGame = std::make_unique<LocalGame>();
@@ -44,7 +43,6 @@ int main(int argc, char* argv[]) {
 			}
 		}
 	}
-	*/
 
 	return 0;
 }

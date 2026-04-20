@@ -118,7 +118,7 @@ void startApp(ChessBoard* boardPtr, GameType game) {
 			if (board->getUsersColor() == Color::BLACK) { moveBot = true; };
 			break;
 		case GameType::RobotVersusRobot :
-			//initialize bots
+			//initialize 
 			moveBot = true;
 	}
 }

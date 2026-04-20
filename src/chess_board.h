@@ -66,6 +66,7 @@ class ChessBoard {
 
 		//getters and setters
 		Piece getPieceAt(const Coord) const;
+		PieceType getPieceTypeAt(const Coord) const;
 		std::set<Coord> getMovesForPieceAt(const Coord) const;
 		std::set<std::pair<Coord, Coord>> getAllPossibleMoves() const;
 		Color getUsersColor() const;

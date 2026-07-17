@@ -1,14 +1,14 @@
 #ifndef LOCAL_GAME_H
 #define LOCAL_GAME_H
 
-#include "game_window.h"
+#include "../resources/screen.h"
 
 #include <set>
 
-class LocalGame : public GameWindow {
+class LocalGame : public Screen {
 	public:
 		LocalGame();
-		void run() override;
+		void run();
 	
 	private:
 		void renderHighlightAt(const SDL_FRect&, const size_t, const size_t, const size_t) const;

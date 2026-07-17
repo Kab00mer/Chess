@@ -1,16 +1,9 @@
 #ifndef MAIN_MENU_H
 #define MAIN_MENU_H
 
-#include "window.h"
+#include "../resources/screen.h"
 
-enum class GameType {
-	None,
-	Local,
-	Computer,
-	Online
-};
-
-class MainMenu : public Window {
+class MainMenu : public Screen {
 	public:
 		MainMenu();
 

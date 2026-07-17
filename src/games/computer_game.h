@@ -1,12 +1,12 @@
 #ifndef COMPUTER_GAME_H
 #define COMPUTER_GAME_H
 
-#include "game_window.h"
+#include "..resources/screen.h"
 
-class ComputerGame : public GameWindow {
+class ComputerGame : public Screen {
 	public:
 		ComputerGame();
-		void run() override;
+		void run();
 
 	private:
 

@@ -1,3 +1,4 @@
+/*
 #include "rendering.h"
 #include "SDL3/SDL.h"
 #include <iostream>
@@ -224,7 +225,6 @@ void continueApp() {
 
 	SDL_RenderPresent(renderer);
 	
-	/*
 	//This is if I want there to be a delay for bot moves
 	if (moveBot && !gameFinished) { 
 		if (currentGame == GameType::PlayerVersusRobot) { 
@@ -234,7 +234,6 @@ void continueApp() {
 		}
 		robotTurn(); 
 	}
-	*/
 }
 
 void stopApp() {
@@ -417,3 +416,4 @@ void robotTurn() {
 	}
 	updateBoard();
 }
+*/

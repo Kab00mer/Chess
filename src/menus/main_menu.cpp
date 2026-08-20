@@ -2,17 +2,15 @@
 
 #include <iostream>
 
-static const size_t WINDOW_HEIGHT = 600;
-static const size_t WINDOW_WIDTH = 600;
+static const size_t WINDOW_HEIGHT = 360;
+static const size_t WINDOW_WIDTH = 640;
 static const size_t BUTTON_HEIGHT = 100;
 static const size_t BUTTON_WIDTH = 400;
 static const size_t BUTTON_PADDING_X = 100;
 static const size_t BUTTON_PADDING_Y = 137;
 
 
-MainMenu::MainMenu() : Window("ChessMenu", WINDOW_WIDTH, WINDOW_HEIGHT) {
-	currentSelection = GameType::None;
-
+MainMenu::MainMenu() {
 	localButton.x = BUTTON_PADDING_X;
 	localButton.y = BUTTON_PADDING_Y - 100;
 	localButton.w = BUTTON_WIDTH;
@@ -34,32 +32,57 @@ MainMenu::MainMenu() : Window("ChessMenu", WINDOW_WIDTH, WINDOW_HEIGHT) {
 	quitButton.h = BUTTON_HEIGHT;
 }
 
-void MainMenu::run() {
+void MainMenu::processInput(const Input& input) {
+	if (SDL_PointInRectFloat(&input.mousePos, &localButton)) {
+		if (input.mousePressed) {
+			pressingAndHoveringOver = AppState::LOCAL_MENU;
+		} else if (input.mouseReleased) {
+			setNextState(AppState::LOCAL_MENU);
+		}
+
+	} else if (SDL_PointInRectFloat(&input.mousePos, &computerButton)) {
+		if (input.mousePressed) {
+			pressingAndHoveringOver = AppState::COMPUTER_MENU;
+		} else if (input.mouseReleased) {
+			setNextState(AppState::COMPUTER_MENU);
+		}
+
+	} else if (SDL_PointInRectFloat(&input.mousePos, &onlineButton)) {
+		if (input.mousePressed) {
+			pressingAndHoveringOver = AppState::ONLINE_MENU;
+		} else if (input.mouseReleased) {	
+			setNextState(AppState::ONLINE_MENU);
+		}
+	} else if (SDL_PointInRectFloat(&input.mousePos, &quitButton)) {
+		if (input.mousePressed) {
+			pressingAndHoveringOver = AppState::ONLINE_GAME;
+		} else if (input.mouseReleased) {
+			setUserExited(true);
+		}
+	} else {
+		pressingAndHoveringOver = AppState::NONE;
+	}
+}
+
+void MainMenu::processRender(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, 100, 100, 100, 200);
 	SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 	SDL_RenderClear(renderer);
 
-	SDL_FPoint point = {mouseX, mouseY};
-
-	(SDL_PointInRectFloat(&point, &localButton) && mousePressed)
-		? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
+	pressingAndHoveringOver == AppState::LOCAL_MENU ? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
 		: SDL_SetRenderDrawColor(renderer, 150, 150, 150, 200);
 	SDL_RenderFillRect(renderer, &localButton);
 
-	(SDL_PointInRectFloat(&point, &computerButton) && mousePressed)
-		? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
+	pressingAndHoveringOver == AppState::COMPUTER_MENU ? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
 		: SDL_SetRenderDrawColor(renderer, 150, 150, 150, 200);
 	SDL_RenderFillRect(renderer, &computerButton);
 
-	(SDL_PointInRectFloat(&point, &onlineButton) && mousePressed)
-		? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
+	pressingAndHoveringOver == AppState::ONLINE_MENU ? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
 		: SDL_SetRenderDrawColor(renderer, 150, 150, 150, 200);
 	SDL_RenderFillRect(renderer, &onlineButton);
 
-	(SDL_PointInRectFloat(&point, &quitButton) && mousePressed)
-		? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
-		: SDL_SetRenderDrawColor(renderer, 255, 0, 0, 200);
-	SDL_RenderFillRect(renderer, &quitButton);
+	pressingAndHoveringOver == AppState::ONLINE_GAME ? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
+		: SDL_RenderFillRect(renderer, &quitButton);
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderRect(renderer, &localButton);
@@ -79,21 +102,4 @@ void MainMenu::run() {
 	SDL_RenderDebugText(renderer, quitButton.x - 42, quitButton.y - 327, "Quit");
 
 	SDL_RenderPresent(renderer);
-
-	if (SDL_PointInRectFloat(&point, &localButton) && mouseReleased) {
-		currentSelection = GameType::Local;
-
-	} else if (SDL_PointInRectFloat(&point, &computerButton) && mouseReleased) {
-		currentSelection = GameType::Computer;
-
-	} else if (SDL_PointInRectFloat(&point, &onlineButton) && mouseReleased) {
-		currentSelection = GameType::Online;
-
-	} else if (SDL_PointInRectFloat(&point, &quitButton) && mouseReleased) {
-		userQuit = true;
-	}
-}
-
-GameType MainMenu::userSelectedGame() {
-	return currentSelection;
 }

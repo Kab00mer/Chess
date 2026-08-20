@@ -6,7 +6,8 @@ static const size_t WINDOW_WIDTH = 1730;
 static const size_t WINDOW_HEIGHT = 1000;
 static const size_t PADDING = 30;
 
-LocalGame::LocalGame() : GameWindow(WINDOW_WIDTH, WINDOW_HEIGHT) {
+LocalGame::LocalGame() {
+	/*
 	for (size_t i = 0; i < 8; ++i) {
 		for (size_t j = 0; j < 8; ++j) {
 			whitesBoard[i][j].x = PADDING + squareSize * i;
@@ -27,8 +28,18 @@ LocalGame::LocalGame() : GameWindow(WINDOW_WIDTH, WINDOW_HEIGHT) {
 	whoseTurnIsIt = Color::WHITE;
 	previousMove = {};
 	possibleMoves = {};
+	*/
 }
 
+void LocalGame::processInput(const Input& input) {
+
+}
+
+void LocalGame::processRender(SDL_Renderer* renderer) {
+
+}
+
+/*
 void LocalGame::run() {
 	SDL_SetRenderDrawColor(renderer, 100, 100, 100, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
@@ -104,7 +115,6 @@ void LocalGame::run() {
 		possibleMoves = board->getMovesForPieceAt(selectedSquare);
 
 	} else if (mouseReleased) {
-		/*
 		if (i == selectedSquare.x && j == selectedSquare.y) {
 			pieceBeingHeld = Piece();
 		} else if (false) {
@@ -114,7 +124,6 @@ void LocalGame::run() {
 			pieceBeingHeld = Piece();
 			possibleMoves.clear(); 
 		}
-		*/
 	}
 
 	SDL_RenderPresent(renderer);
@@ -148,3 +157,4 @@ Coord LocalGame::getCoordFromMouse() const {
 	
 	return Coord(i, j);
 }
+*/

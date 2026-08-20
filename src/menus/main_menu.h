@@ -7,15 +7,16 @@ class MainMenu : public Screen {
 	public:
 		MainMenu();
 
-		void run() override;
-		GameType userSelectedGame();
+		void processInput(const Input&) override;
+		void processRender(SDL_Renderer*) override;
 	
 	private:
-		GameType currentSelection;
+		AppState pressingAndHoveringOver;
 		SDL_FRect localButton;
 		SDL_FRect computerButton;
 		SDL_FRect onlineButton;
 		SDL_FRect quitButton;
+
 };
 
 #endif

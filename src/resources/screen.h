@@ -7,6 +7,7 @@
 
 enum class AppState {
 	NONE,
+	MAIN_MENU,
 	LOCAL_MENU,
 	COMPUTER_MENU,
 	ONLINE_MENU,
@@ -15,14 +16,34 @@ enum class AppState {
 	ONLINE_GAME
 };
 
-class Window {
+struct Input {
+	//bool keys[SDL_NUM_SCANCODES];		
+
+	std::string textInput;
+	bool backspace = false;
+	bool enter = false;
+
+	bool mousePressed = false;
+	bool mouseReleased = false;
+	SDL_FPoint mousePos;
+};
+
+class Screen {
 	public:
-		virtual void processInput() {}
-		virtual void processUpdate() {}
+		Screen() : userExited(false), nextState(AppState::NONE) {}
+
+		virtual void processInput(const Input&) {}
 		virtual void processRender(SDL_Renderer*) {}
 
-		virtual bool exit() { return false; }
-		virtual AppState nextState() { return AppState::NONE; }
+		bool getUserExited() { return exit; }
+		AppState getNextState() { return nextState; }
+
+		void setUserExited(bool newBool) { userExited = newBool; }
+		void setNextState(AppState newState) { nextState = newState; }
+
+	private:
+		bool userExited;
+		AppState nextState;
 };
 
 #endif

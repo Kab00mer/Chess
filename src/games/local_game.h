@@ -2,13 +2,16 @@
 #define LOCAL_GAME_H
 
 #include "../resources/screen.h"
+#include "../resources/chess_board.h"
 
 #include <set>
 
 class LocalGame : public Screen {
 	public:
 		LocalGame();
-		void run();
+
+		void processInput(const Input&) override;
+		void processRender(SDL_Renderer*) override;
 	
 	private:
 		void renderHighlightAt(const SDL_FRect&, const size_t, const size_t, const size_t) const;

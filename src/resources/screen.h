@@ -35,7 +35,7 @@ class Screen {
 		virtual void processInput(const Input&) {}
 		virtual void processRender(SDL_Renderer*) {}
 
-		bool getUserExited() { return exit; }
+		bool getUserExited() { return userExited; }
 		AppState getNextState() { return nextState; }
 
 		void setUserExited(bool newBool) { userExited = newBool; }

@@ -7,14 +7,26 @@
 #include "games/computer_game.h"
 #include "games/online_game.h"
 
+#include <iostream>
+
+static const size_t STRETCHED_WINDOW_WIDTH = 1280;
+static const size_t TRUE_WINDOW_WIDTH = 640;
+static const size_t STRETCHED_WINDOW_HEIGHT = 720;
+static const size_t TRUE_WINDOW_HEIGHT = 360;
+
+static const float WINDOW_SCALE_X = static_cast<float>(TRUE_WINDOW_WIDTH) / STRETCHED_WINDOW_WIDTH;
+static const float WINDOW_SCALE_Y = static_cast<float>(TRUE_WINDOW_HEIGHT) / STRETCHED_WINDOW_HEIGHT;
+
 ChessApp::ChessApp() {
 	quitProgram = false;
 
-	window.reset(SDL_CreateWindow("Chess App", 1280, 720, SDL_WINDOW_RESIZABLE));
+	window.reset(SDL_CreateWindow("Chess App", STRETCHED_WINDOW_WIDTH, STRETCHED_WINDOW_HEIGHT, 
+			SDL_WINDOW_RESIZABLE));
 	renderer.reset(SDL_CreateRenderer(window.get(), nullptr));
 
 	//sets SDL's Coord system to be 640 by 360 and strech depending on how big the window is
-	SDL_SetRenderLogicalPresentation(renderer.get(), 640, 360, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_SetRenderLogicalPresentation(renderer.get(), TRUE_WINDOW_WIDTH, 
+			TRUE_WINDOW_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 	screens[AppState::MAIN_MENU] = std::make_unique<MainMenu>();
 	screens[AppState::LOCAL_MENU] = std::make_unique<LocalMenu>();
@@ -39,6 +51,9 @@ void ChessApp::mainLoop() {
 	}
 
 	AppState nextState = screens[state]->getNextState();
+	if (nextState != AppState::NONE) {
+		screens[state]->setNextState(AppState::NONE);
+	}
 	switch (nextState) {
 		case AppState::NONE:
 			break;
@@ -63,7 +78,7 @@ void ChessApp::mainLoop() {
 					|| state == AppState::ONLINE_GAME) {
 				screens[state].reset();
 			}
-				state = nextState;
+			state = nextState;
 	}
 }
 
@@ -94,14 +109,14 @@ void ChessApp::readInput() {
 				break;
 
 			case SDL_EVENT_MOUSE_BUTTON_DOWN:
+				input.mousePos = { event.button.x * WINDOW_SCALE_X, event.button.y * WINDOW_SCALE_Y};
 				input.mousePressed = true;
 				break;
 
 			case SDL_EVENT_MOUSE_BUTTON_UP:
+				input.mousePos = { event.button.x * WINDOW_SCALE_X, event.button.y * WINDOW_SCALE_Y};
 				input.mouseReleased = true;
 				break;
 		}
 	}
-
-	input.mousePos = { event.button.x, event.button.y };
 }

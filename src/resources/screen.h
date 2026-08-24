@@ -28,9 +28,16 @@ struct Input {
 	SDL_FPoint mousePos;
 };
 
+enum class WhoGoesFirst {
+	RANDOM,
+	LEFT_FIRST,
+	RIGHT_FIRST
+};
+
 class Screen {
 	public:
-		Screen() : userExited(false), nextState(AppState::NONE) {}
+		Screen() : userExited(false), nextState(AppState::NONE), 
+			whoFirst(WhoGoesFirst::RANDOM), timeControl(0) {}
 
 		virtual void processInput(const Input&) {}
 		virtual void processRender(SDL_Renderer*) {}
@@ -41,9 +48,27 @@ class Screen {
 		void setUserExited(bool newBool) { userExited = newBool; }
 		void setNextState(AppState newState) { nextState = newState; }
 
+		WhoGoesFirst getWhoFirst() { return whoFirst; }
+		void setWhoFirst(WhoGoesFirst newFirst) { whoFirst = newFirst; }
+
+		size_t getTimeControl() { return timeControl; }
+		void setTimeControl(size_t newTime) { timeControl = newTime; }
+
+		void renderBoardAt(SDL_FRect board[][8], SDL_Renderer* renderer) {
+			for (size_t i = 0; i < 8; ++i) {
+				for (size_t j = 0; j < 8; ++j) {
+					(i + j) % 2 == 1 ? SDL_SetRenderDrawColor(renderer, 0, 0, 0, 200) 
+						: SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
+					SDL_RenderFillRect(renderer, &board[i][j]);
+				}
+			}
+		}
+
 	private:
 		bool userExited;
 		AppState nextState;
+		WhoGoesFirst whoFirst;
+		size_t timeControl;
 };
 
 #endif

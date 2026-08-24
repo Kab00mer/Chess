@@ -59,17 +59,24 @@ void ChessApp::mainLoop() {
 			break;
 
 		case AppState::LOCAL_GAME:
+			//fix later by writing unique getters for each type of menu/game
 			screens[AppState::LOCAL_GAME] = std::make_unique<LocalGame>();
+			screens[AppState::LOCAL_GAME]->setWhoFirst(screens[AppState::LOCAL_MENU]->getWhoFirst());
+			screens[AppState::LOCAL_GAME]->setTimeControl(screens[AppState::LOCAL_MENU]->getTimeControl());
 			state = nextState;
 			break;
 
 		case AppState::COMPUTER_GAME:
+			//fix later by writing unique getters for each type of menu/game
 			screens[AppState::COMPUTER_GAME] = std::make_unique<ComputerGame>();
+			screens[AppState::COMPUTER_GAME]->setWhoFirst(screens[AppState::COMPUTER_MENU]->getWhoFirst());
 			state = nextState;
 			break;
 
 		case AppState::ONLINE_GAME:
+			//fix later by writing unique getters for each type of menu/game
 			screens[AppState::ONLINE_GAME] = std::make_unique<OnlineGame>();
+			screens[AppState::ONLINE_GAME]->setTimeControl(screens[AppState::ONLINE_MENU]->getTimeControl());
 			state = nextState;
 			break;
 
@@ -96,12 +103,6 @@ void ChessApp::readInput() {
 		switch (event.type) {
 			case SDL_EVENT_QUIT:
 				quitProgram = true;
-				break;
-
-			case SDL_EVENT_KEY_DOWN:
-				break;
-
-			case SDL_EVENT_KEY_UP:
 				break;
 
 			case SDL_EVENT_TEXT_INPUT:

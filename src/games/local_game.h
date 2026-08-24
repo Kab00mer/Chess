@@ -17,8 +17,10 @@ class LocalGame : public Screen {
 		void renderHighlightAt(const SDL_FRect&, const size_t, const size_t, const size_t) const;
 		Coord getCoordFromMouse() const;
 
-		SDL_FRect whitesBoard[8][8];
-		SDL_FRect blacksBoard[8][8];
+		SDL_FRect leftBoard[8][8];
+		SDL_FRect rightBoard[8][8];
+
+		ChessBoard board;
 
 		Coord selectedSquare;
 

@@ -8,7 +8,7 @@ class LocalMenu : public Screen {
 		LocalMenu();
 
 		void processInput(const Input&) override;
-		void processRender(SDL_Renderer*) override;
+		void processRender(SDL_Renderer*, const std::map<std::string, SDL_Texture*>&) override;
 
 	private:
 		enum class Selection {

@@ -6,19 +6,19 @@
 #include <string>
 
 enum class Color {
-	WHITE,
-	BLACK,
-	NONE
+	WHITE = 'w',
+	BLACK = 'b',
+	NONE = ' '
 };
 
 enum class PieceType {
-	PAWN,
-	BISHOP,
-	KNIGHT,
-	ROOK,
-	QUEEN,
-	KING,
-	NONE
+	PAWN = 'p',
+	BISHOP = 'b',
+	KNIGHT = 'n',
+	ROOK = 'r',
+	QUEEN = 'q',
+	KING = 'k',
+	NONE = ' '
 };
 
 struct Coord {

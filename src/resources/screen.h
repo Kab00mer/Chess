@@ -4,6 +4,7 @@
 #include "SDL3/SDL.h"
 
 #include <string>
+#include <map>
 
 enum class AppState {
 	NONE,
@@ -40,7 +41,7 @@ class Screen {
 			whoFirst(WhoGoesFirst::RANDOM), timeControl(0) {}
 
 		virtual void processInput(const Input&) {}
-		virtual void processRender(SDL_Renderer*) {}
+		virtual void processRender(SDL_Renderer*, const std::map<std::string, SDL_Texture*>&) {}
 
 		bool getUserExited() { return userExited; }
 		AppState getNextState() { return nextState; }
@@ -54,7 +55,7 @@ class Screen {
 		size_t getTimeControl() { return timeControl; }
 		void setTimeControl(size_t newTime) { timeControl = newTime; }
 
-		void renderBoardAt(SDL_FRect board[][8], SDL_Renderer* renderer) {
+		void renderCheckeredBoard(SDL_FRect board[][8], SDL_Renderer* renderer) {
 			for (size_t i = 0; i < 8; ++i) {
 				for (size_t j = 0; j < 8; ++j) {
 					(i + j) % 2 == 1 ? SDL_SetRenderDrawColor(renderer, 0, 0, 0, 200) 

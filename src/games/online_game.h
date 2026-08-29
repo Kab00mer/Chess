@@ -9,7 +9,7 @@ class OnlineGame : public Screen {
 		OnlineGame();
 
 		void processInput(const Input&) override;
-		void processRender(SDL_Renderer*) override;
+		void processRender(SDL_Renderer*, const std::map<std::string, SDL_Texture*>&) override;
 
 	private:
 		

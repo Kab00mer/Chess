@@ -11,16 +11,19 @@ class LocalGame : public Screen {
 		LocalGame();
 
 		void processInput(const Input&) override;
-		void processRender(SDL_Renderer*) override;
+		void processRender(SDL_Renderer*, const std::map<std::string, SDL_Texture*>&) override;
 	
 	private:
-		void renderHighlightAt(const SDL_FRect&, const size_t, const size_t, const size_t) const;
-		Coord getCoordFromMouse() const;
+		void renderHighlightAt(const SDL_FRect&, const size_t, const size_t, 
+				const size_t, SDL_Renderer*) const;
+		Coord getCoordFromMouse(const Input&) const;
 
 		SDL_FRect leftBoard[8][8];
 		SDL_FRect rightBoard[8][8];
 
-		ChessBoard board;
+		Piece boardState;
+
+		ChessBoard game;
 
 		Coord selectedSquare;
 

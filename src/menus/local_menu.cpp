@@ -165,7 +165,7 @@ void LocalMenu::processInput(const Input& input) {
 	}
 }
 
-void LocalMenu::processRender(SDL_Renderer* renderer) {
+void LocalMenu::processRender(SDL_Renderer* renderer, const std::map<std::string, SDL_Texture*>& pieces) {
 	SDL_SetRenderDrawColor(renderer, 100, 100, 100, 200);
 	SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 	SDL_RenderClear(renderer);

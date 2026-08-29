@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 #include <memory>
+#include <random>
 
 struct WindowDeleter {
 	void operator()(SDL_Window* window) const {
@@ -25,6 +26,7 @@ struct RendererDeleter {
 class ChessApp {
 	public:
 		ChessApp();
+		~ChessApp();
 			
 		void mainLoop();
 
@@ -37,9 +39,14 @@ class ChessApp {
 		std::unique_ptr<SDL_Renderer, RendererDeleter> renderer;
 
 		std::unordered_map<AppState, std::unique_ptr<Screen>> screens;
+		std::map<std::string, SDL_Texture*> pieceTextures;
 		Input input;
 		AppState state;
 		bool quitProgram;
+
+		std::random_device rd;
+		std::default_random_engine generator;
+		std::uniform_int_distribution<int> distribution;
 };
 
 #endif

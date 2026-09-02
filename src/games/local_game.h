@@ -14,18 +14,17 @@ class LocalGame : public Screen {
 		void processRender(SDL_Renderer*, const std::map<std::string, SDL_Texture*>&) override;
 	
 	private:
+		void lookForMouseInBoard(size_t&, size_t&, bool);
 		void renderHighlightAt(const SDL_FRect&, const size_t, const size_t, 
 				const size_t, SDL_Renderer*) const;
-		Coord getCoordFromMouse(const Input&) const;
 
 		SDL_FRect leftBoard[8][8];
 		SDL_FRect rightBoard[8][8];
 
-		Piece boardState;
-
 		ChessBoard game;
 
 		Coord selectedSquare;
+		SDL_FPoint mouse;
 
 		SDL_FRect promotionScreen[4];
 		bool inPromotionScreen;
@@ -34,7 +33,7 @@ class LocalGame : public Screen {
 
 		Color whoseTurnIsIt;
 
-		Move previousMove;
+		std::pair<Coord, Coord> previousMove;
 		std::set<Coord> possibleMoves;
 };
 

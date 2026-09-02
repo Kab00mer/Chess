@@ -163,6 +163,8 @@ void ChessApp::readInput() {
 
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
+		input.mousePos = {event.button.x * windowScaleX, event.button.y * windowScaleY };
+
 		switch (event.type) {
 			case SDL_EVENT_QUIT:
 				quitProgram = true;
@@ -173,12 +175,10 @@ void ChessApp::readInput() {
 				break;
 
 			case SDL_EVENT_MOUSE_BUTTON_DOWN:
-				input.mousePos = { event.button.x * windowScaleX, event.button.y * windowScaleY};
 				input.mousePressed = true;
 				break;
 
 			case SDL_EVENT_MOUSE_BUTTON_UP:
-				input.mousePos = { event.button.x * windowScaleX, event.button.y * windowScaleY};
 				input.mouseReleased = true;
 				break;
 		}

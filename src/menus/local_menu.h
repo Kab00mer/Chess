@@ -2,6 +2,7 @@
 #define LOCAL_MENU_H
 
 #include "../resources/screen.h"
+#include "../resources/widgets.h"
 
 class LocalMenu : public Screen {
 	public:
@@ -11,38 +12,22 @@ class LocalMenu : public Screen {
 		void processRender(SDL_Renderer*, const std::map<std::string, SDL_Texture*>&) override;
 
 	private:
-		enum class Selection {
-			NONE,
-			START,
-			RETURN,
-			RANDOM,
-			LEFT_FIRST,
-			RIGHT_FIRST,
-			MIN_30,
-			MIN_15,
-			MIN_10,
-			MIN_5,
-			MIN_3,
-			MIN_1
-		};
+		WhoGoesFirst turnOrder;
+		size_t timeControl;
 
-		Selection highlighted;
-		Selection turnOrder;
-		Selection timeControl;
-
-		SDL_FRect startButton;
-		SDL_FRect goBackButton;
+		Button startButton;
+		Button goBackButton;
 		
-		SDL_FRect randomFirstButton;
-		SDL_FRect leftFirstButton;
-		SDL_FRect rightFirstButton;
+		Button randomFirstButton;
+		Button leftFirstButton;
+		Button rightFirstButton;
 
-		SDL_FRect timeButton30;
-		SDL_FRect timeButton15;
-		SDL_FRect timeButton10;
-		SDL_FRect timeButton5;
-		SDL_FRect timeButton3;
-		SDL_FRect timeButton1;
+		Button timeButton30;
+		Button timeButton15;
+		Button timeButton10;
+		Button timeButton5;
+		Button timeButton3;
+		Button timeButton1;
 };
 
 #endif

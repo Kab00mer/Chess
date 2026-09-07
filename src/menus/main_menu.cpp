@@ -11,63 +11,40 @@ static const size_t BUTTON_PADDING_X = 150;
 static const size_t BUTTON_PADDING_Y = 16;
 
 static const float TEXT_SCALE = 3.0f;
-static const size_t LOCAL_TEXT_OFFSET = 50;
-static const size_t COMPUTER_TEXT_OFFSET = 55;
-static const size_t ONLINE_TEXT_OFFSET = 35;
-static const size_t QUIT_TEXT_OFFSET = 110;
-static const size_t TEXT_OFFSET_Y = 23;
 
-MainMenu::MainMenu() : Screen() {
-	localButton.x = BUTTON_PADDING_X;
-	localButton.y = BUTTON_PADDING_Y;
-	localButton.w = BUTTON_WIDTH;
-	localButton.h = BUTTON_HEIGHT;
+static const std::string LOCAL_TEXT = "Local Game";
+static const std::string COMPUTER_TEXT= "Computer Game";
+static const std::string ONLINE_TEXT = "Online Game";
+static const std::string QUIT_TEXT = "QUIT";
 
-	computerButton.x = BUTTON_PADDING_X;
-	computerButton.y = BUTTON_PADDING_Y * 2 + BUTTON_HEIGHT;
-	computerButton.w = BUTTON_WIDTH;
-	computerButton.h = BUTTON_HEIGHT;
-
-	onlineButton.x = BUTTON_PADDING_X;
-	onlineButton.y = BUTTON_PADDING_Y * 3 + BUTTON_HEIGHT * 2;
-	onlineButton.w = BUTTON_WIDTH;
-	onlineButton.h = BUTTON_HEIGHT;
-
-	quitButton.x = BUTTON_PADDING_X;
-	quitButton.y = BUTTON_PADDING_Y * 4 + BUTTON_HEIGHT * 3;
-	quitButton.w = BUTTON_WIDTH;
-	quitButton.h = BUTTON_HEIGHT;
-}
+MainMenu::MainMenu() : Screen(), 
+	localButton(BUTTON_PADDING_X, BUTTON_PADDING_Y, BUTTON_WIDTH, BUTTON_HEIGHT, LOCAL_TEXT),
+	computerButton(BUTTON_PADDING_X, BUTTON_PADDING_Y * 2 + BUTTON_HEIGHT,
+			BUTTON_WIDTH, BUTTON_HEIGHT, COMPUTER_TEXT),
+	onlineButton(BUTTON_PADDING_X, BUTTON_PADDING_Y * 3 + BUTTON_HEIGHT * 2,
+			BUTTON_WIDTH, BUTTON_HEIGHT, ONLINE_TEXT),
+	quitButton(BUTTON_PADDING_X, BUTTON_PADDING_Y * 4 + BUTTON_HEIGHT * 3,
+			BUTTON_WIDTH, BUTTON_HEIGHT, QUIT_TEXT) {}
 
 void MainMenu::processInput(const Input& input) {
-	if (SDL_PointInRectFloat(&input.mousePos, &localButton)) {
-		if (input.mousePressed) {
-			pressingAndHoveringOver = AppState::LOCAL_MENU;
-		} else if (input.mouseReleased) {
-			setNextState(AppState::LOCAL_MENU);
-		}
+	localButton.input(input);
+	if (localButton.wasPressed) {
+		setNextState(AppState::LOCAL_MENU);
+	}
 
-	} else if (SDL_PointInRectFloat(&input.mousePos, &computerButton)) {
-		if (input.mousePressed) {
-			pressingAndHoveringOver = AppState::COMPUTER_MENU;
-		} else if (input.mouseReleased) {
-			setNextState(AppState::COMPUTER_MENU);
-		}
+	computerButton.input(input);
+	if (computerButton.wasPressed) {
+		setNextState(AppState::COMPUTER_MENU);
+	}
 
-	} else if (SDL_PointInRectFloat(&input.mousePos, &onlineButton)) {
-		if (input.mousePressed) {
-			pressingAndHoveringOver = AppState::ONLINE_MENU;
-		} else if (input.mouseReleased) {	
-			setNextState(AppState::ONLINE_MENU);
-		}
-	} else if (SDL_PointInRectFloat(&input.mousePos, &quitButton)) {
-		if (input.mousePressed) {
-			pressingAndHoveringOver = AppState::ONLINE_GAME;
-		} else if (input.mouseReleased) {
-			setUserExited(true);
-		}
-	} else {
-		pressingAndHoveringOver = AppState::NONE;
+	onlineButton.input(input);
+	if (onlineButton.wasPressed) {	
+		setNextState(AppState::ONLINE_MENU);
+	}
+
+	quitButton.input(input);
+	if (quitButton.wasPressed) {
+		setUserExited(true);
 	}
 }
 
@@ -76,43 +53,10 @@ void MainMenu::processRender(SDL_Renderer* renderer, const std::map<std::string,
 	SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 	SDL_RenderClear(renderer);
 
-	pressingAndHoveringOver == AppState::LOCAL_MENU ? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
-		: SDL_SetRenderDrawColor(renderer, 150, 150, 150, 200);
-	SDL_RenderFillRect(renderer, &localButton);
-
-	pressingAndHoveringOver == AppState::COMPUTER_MENU ? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
-		: SDL_SetRenderDrawColor(renderer, 150, 150, 150, 200);
-	SDL_RenderFillRect(renderer, &computerButton);
-
-	pressingAndHoveringOver == AppState::ONLINE_MENU ? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
-		: SDL_SetRenderDrawColor(renderer, 150, 150, 150, 200);
-	SDL_RenderFillRect(renderer, &onlineButton);
-
-	pressingAndHoveringOver == AppState::ONLINE_GAME ? SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200)
-		: SDL_SetRenderDrawColor(renderer, 255, 0, 0, 200);
-	SDL_RenderFillRect(renderer, &quitButton);
-
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-	SDL_RenderRect(renderer, &localButton);
-	SDL_RenderRect(renderer, &computerButton);
-	SDL_RenderRect(renderer, &onlineButton);
-	SDL_RenderRect(renderer, &quitButton);
-
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 200);
-	SDL_SetRenderScale(renderer, TEXT_SCALE, TEXT_SCALE);
-	SDL_RenderDebugText(renderer, static_cast<int>((localButton.x + LOCAL_TEXT_OFFSET) / TEXT_SCALE), 
-			static_cast<int>((localButton.y + TEXT_OFFSET_Y) / TEXT_SCALE), "Local Game");
-
-	SDL_SetRenderScale(renderer, TEXT_SCALE - 0.5f, TEXT_SCALE - 0.05f);
-	SDL_RenderDebugText(renderer, static_cast<int>((computerButton.x + COMPUTER_TEXT_OFFSET) / TEXT_SCALE),
-			static_cast<int>((computerButton.y + TEXT_OFFSET_Y) / TEXT_SCALE), "Versus Computer");
-
-	SDL_SetRenderScale(renderer, TEXT_SCALE, TEXT_SCALE);
-	SDL_RenderDebugText(renderer, static_cast<int>((onlineButton.x + ONLINE_TEXT_OFFSET) / TEXT_SCALE),
-			static_cast<int>((onlineButton.y + TEXT_OFFSET_Y) / TEXT_SCALE), "Online Game");
-
-	SDL_RenderDebugText(renderer, static_cast<int>((quitButton.x + QUIT_TEXT_OFFSET) / TEXT_SCALE), 
-			static_cast<int>((quitButton.y + TEXT_OFFSET_Y) / TEXT_SCALE), "Quit");
+	localButton.renderWithText(renderer, TEXT_SCALE);
+	computerButton.renderWithText(renderer, TEXT_SCALE);
+	onlineButton.renderWithText(renderer, TEXT_SCALE);
+	quitButton.renderWithText(renderer, TEXT_SCALE, 255, 0, 0);
 
 	SDL_RenderPresent(renderer);
 }
